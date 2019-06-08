@@ -1,6 +1,14 @@
-# vue-admin-template
+# komento-vue
 
-> 这是一个极简的 vue admin 管理后台。它只包含了 Element UI & axios & iconfont & permission control & lint，这些搭建后台必要的东西。
+本项目基于 [vue-element-admin](https://panjiachen.gitee.io/vue-element-admin-site/zh/)，更多信息请参考其 [使用文档](https://panjiachen.github.io/vue-element-admin-site/zh/)
+
+如果你之前没有接触过 vue，最好先大概浏览一下以下一些文档
+- [vue](https://cn.vuejs.org/index.html)
+- [vuex](https://vuex.vuejs.org/zh-cn/)
+- [vue-router](https://router.vuejs.org/zh-cn/)
+- [vue-cli](https://github.com/vuejs/vue-cli)
+- [axios](https://github.com/axios/axios)
+- [element-ui](https://github.com/ElemeFE/element)
 
 ## Build Setup
 
@@ -49,10 +57,6 @@ npm run lint
 npm run lint -- --fix
 ```
 
-更多信息请参考 [使用文档](https://panjiachen.github.io/vue-element-admin-site/zh/)
 
-## Demo
-
-![demo](https://github.com/PanJiaChen/PanJiaChen.github.io/blob/master/images/demo.gif)
 
 
