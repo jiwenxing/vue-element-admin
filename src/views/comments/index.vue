@@ -2,47 +2,63 @@
   <div class="app-container">
     <div class="filter-container">
       <div>
-        <el-select v-model="listQuery.auditStatus" placeholder="audit status" clearable style="width: 120px" class="filter-item">
+        <el-select v-model="listQuery.auditStatus" placeholder="audit status" clearable style="width: 120px" class="filter-item bottom-space">
           <el-option v-for="item in auditStatusOptions" :key="item.key" :label="item.display_name" :value="item.key" />
         </el-select>
-        <el-input v-model="listQuery.pin" placeholder="pin" style="width: 150px" class="filter-item" @keyup.enter.native="handleFilter" />
-        <el-input v-model="listQuery.sku" placeholder="commodity number" style="width: 150px" class="filter-item" @keyup.enter.native="handleFilter" />
-        <el-input v-model="listQuery.orderId" placeholder="order number" style="width: 150px" class="filter-item" @keyup.enter.native="handleFilter" />
-        <el-select v-model="listQuery.grade" placeholder="grade" clearable style="width: 120px" class="filter-item">
+        <el-input v-model="listQuery.pin" placeholder="pin" style="width: 150px" class="filter-item bottom-space" @keyup.enter.native="handleFilter" />
+        <el-input v-model="listQuery.sku" placeholder="commodity number" style="width: 150px" class="filter-item bottom-space" @keyup.enter.native="handleFilter" />
+        <el-input v-model="listQuery.orderId" placeholder="order number" style="width: 150px" class="filter-item bottom-space" @keyup.enter.native="handleFilter" />
+        <el-select v-model="listQuery.grade" placeholder="grade" clearable style="width: 120px" class="filter-item bottom-space">
           <el-option v-for="item in gradeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
         </el-select>
-        <el-select v-model="listQuery.topStatus" placeholder="top status" clearable style="width: 120px" class="filter-item">
+        <el-select v-model="listQuery.topStatus" placeholder="top status" clearable style="width: 120px" class="filter-item bottom-space">
           <el-option v-for="item in topStatusOptions" :key="item.key" :label="item.display_name" :value="item.key" />
         </el-select>
-        <el-select v-model="listQuery.shareStatus" placeholder="share status" clearable style="width: 130px" class="filter-item">
+        <el-select v-model="listQuery.shareStatus" placeholder="share status" clearable style="width: 130px" class="filter-item bottom-space">
           <el-option v-for="item in shareStatusOptions" :key="item.key" :label="item.display_name" :value="item.key" />
         </el-select>
+        <el-input v-model="listQuery.keyword" placeholder="keyword" style="width: 200px" class="filter-item bottom-space" @keyup.enter.native="handleFilter" />
+        <el-select v-model="listQuery.importance" placeholder="category1" clearable style="width: 120px" class="filter-item bottom-space">
+          <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
+        </el-select>
+        <el-select v-model="listQuery.importance" placeholder="category2" clearable style="width: 120px" class="filter-item bottom-space">
+          <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
+        </el-select>
+        <el-select v-model="listQuery.importance" placeholder="category3" clearable style="width: 120px" class="filter-item bottom-space">
+          <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
+        </el-select>
+        <el-select v-model="listQuery.type" clearable class="filter-item bottom-space" style="width: 130px">
+          <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name+'('+item.key+')'" :value="item.key" />
+        </el-select>
+        <el-select v-model="listQuery.sort" style="width: 140px" class="filter-item bottom-space" @change="handleFilter">
+          <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key" />
+        </el-select>
 
-        <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+        <el-button v-waves class="filter-item bottom-space" type="primary" icon="el-icon-search" @click="handleFilter">
           Search
         </el-button>
-        <el-button v-waves class="filter-item" type="danger" icon="el-icon-delete" @click="resetSearch">
+        <el-button v-waves class="filter-item bottom-space" type="danger" icon="el-icon-delete" @click="resetSearch">
           Clear
         </el-button>
-        <!-- <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
+        <!-- <el-button v-waves :loading="downloadLoading" class="filter-item bottom-space" type="primary" icon="el-icon-download" @click="handleDownload">
           Export
         </el-button> -->
       </div>
-      <div v-if="showAll">
-        <el-input v-model="listQuery.keyword" placeholder="keyword" style="width: 200px" class="filter-item" @keyup.enter.native="handleFilter" />
-        <el-select v-model="listQuery.importance" placeholder="category1" clearable style="width: 120px" class="filter-item">
+      <!-- <div v-if="showAll">
+        <el-input v-model="listQuery.keyword" placeholder="keyword" style="width: 200px" class="filter-item bottom-space" @keyup.enter.native="handleFilter" />
+        <el-select v-model="listQuery.importance" placeholder="category1" clearable style="width: 120px" class="filter-item bottom-space">
           <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
         </el-select>
-        <el-select v-model="listQuery.importance" placeholder="category2" clearable style="width: 120px" class="filter-item">
+        <el-select v-model="listQuery.importance" placeholder="category2" clearable style="width: 120px" class="filter-item bottom-space">
           <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
         </el-select>
-        <el-select v-model="listQuery.importance" placeholder="category3" clearable style="width: 120px" class="filter-item">
+        <el-select v-model="listQuery.importance" placeholder="category3" clearable style="width: 120px" class="filter-item bottom-space">
           <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
         </el-select>
-        <el-select v-model="listQuery.type" clearable class="filter-item" style="width: 130px">
+        <el-select v-model="listQuery.type" clearable class="filter-item bottom-space" style="width: 130px">
           <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name+'('+item.key+')'" :value="item.key" />
         </el-select>
-        <el-select v-model="listQuery.sort" style="width: 140px" class="filter-item" @change="handleFilter">
+        <el-select v-model="listQuery.sort" style="width: 140px" class="filter-item bottom-space" @change="handleFilter">
           <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key" />
         </el-select>
       </div>
@@ -50,9 +66,10 @@
         <i :class="[showAll ? 'el-icon-caret-top' : 'el-icon-caret-bottom']" />
         <span v-if="showAll" class="tips">hide search options</span>
         <span v-else class="tips">show more search options</span>
-      </div>
+      </div> -->
     </div>
 
+    <pagination v-show="total>=10" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" style="padding: 20px 0 5px" @pagination="getList" />
     <el-table
       :key="tableKey"
       v-loading="listLoading"
@@ -127,12 +144,12 @@
       </el-table-column>
     </el-table>
 
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" style="padding: 20px 0 5px" @pagination="getList" />
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 500px; margin-left:50px;">
         <!-- <el-form-item :label="$t('table.type')" prop="type">
-          <el-select v-model="temp.type" class="filter-item" placeholder="Please select">
+          <el-select v-model="temp.type" class="filter-item bottom-space" placeholder="Please select">
             <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
           </el-select>
         </el-form-item>
@@ -143,7 +160,7 @@
           <el-input v-model="temp.title" type="textarea" :rows="3" />
         </el-form-item>
         <!-- <el-form-item :label="$t('table.status')">
-          <el-select v-model="temp.status" class="filter-item" placeholder="Please select">
+          <el-select v-model="temp.status" class="filter-item bottom-space" placeholder="Please select">
             <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
@@ -180,7 +197,7 @@
 import { fetchPv, createArticle, updateArticle } from '@/api/article'
 import { fetchList } from '@/api/comment'
 import waves from '@/directive/waves' // waves directive
-import { parseTime } from '@/utils/index'
+// import { parseTime } from '@/utils/index'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
 const calendarTypeOptions = [
@@ -474,7 +491,10 @@ export default {
   right: 15px;
   top: 10px;
 }
-.demo-block-control{box-sizing:border-box;background-color:#fff;border-bottom-left-radius:4px;border-bottom-right-radius:4px;text-align:center;margin-top:-1px;color:#d3dce6;cursor:pointer;position:relative}
-.demo-block-control:hover{color:#409eff;background-color:#f9fafc}
+.bottom-space {
+  margin-bottom: 5px;
+}
+/* .demo-block-control{box-sizing:border-box;background-color:#fff;border-bottom-left-radius:4px;border-bottom-right-radius:4px;text-align:center;margin-top:-1px;color:#d3dce6;cursor:pointer;position:relative}
+.demo-block-control:hover{color:#409eff;background-color:#f9fafc} */
 
 </style>
