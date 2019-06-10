@@ -44,11 +44,10 @@ export const constantRoutes = [
   },
 
   {
-    path: '/',
+    path: '/comments',
     component: Layout,
-    redirect: '/comments',
     children: [{
-      path: 'comments',
+      path: 'index',
       name: 'Comments',
       component: () => import('@/views/comments/index'),
       meta: { title: 'Comments', icon: 'comment' }
@@ -56,10 +55,10 @@ export const constantRoutes = [
   },
 
   {
-    path: '/',
+    path: '/share',
     component: Layout,
     children: [{
-      path: 'share',
+      path: 'index',
       name: 'ShowOrder',
       component: () => import('@/views/share/index'),
       meta: { title: 'Show Order', icon: 'share' }
@@ -67,11 +66,11 @@ export const constantRoutes = [
   },
 
   {
-    path: '/',
+    path: '/report',
     component: Layout,
     children: [
       {
-        path: 'report',
+        path: 'index',
         name: 'Report',
         component: () => import('@/views/report/index'),
         meta: { title: 'Report', icon: 'report' }

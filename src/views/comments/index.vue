@@ -62,7 +62,8 @@
       </el-table-column>
       <el-table-column label="Commodity Name" min-width="120px">
         <template slot-scope="{row}">
-          <a :href="'https://item.jd.com/' + row.sku + '.html'" target="_blank" class="link-type">{{ row.title }}</a>
+          <a :href="'https://item.jd.com/' + row.sku + '.html'" target="_blank">{{ row.title }}</a>
+          <i class="el-icon-link">aa</i>
         </template>
       </el-table-column>
       <el-table-column label="Pin" width="110px" align="center">
@@ -72,7 +73,8 @@
       </el-table-column>
       <el-table-column label="Content" min-width="150px">
         <template slot-scope="{row}">
-          <span class="link-type" @click="handleUpdate(row)">{{ row.content }}</span>
+          <span>{{ row.content }}</span>
+          <el-button size="mini" icon="el-icon-edit" @click="handleUpdate(row)" />
         </template>
       </el-table-column>
       <el-table-column label="Score" width="100px">
@@ -125,7 +127,7 @@
         <el-form-item :label="$t('table.date')" prop="timestamp">
           <el-date-picker v-model="temp.timestamp" type="datetime" placeholder="Please pick a date" />
         </el-form-item> -->
-        <el-form-item label="Content" prop="content">
+        <el-form-item label="Content" prop="content" :rules="[{ required: true, message: 'Content cannot be empty!'}]">
           <el-input v-model="temp.content" type="textarea" :rows="3" />
         </el-form-item>
         <!-- <el-form-item :label="$t('table.status')">
