@@ -36,6 +36,7 @@
         </el-button>
       </div>
     </div>
+    <el-divider />
 
     <pagination v-show="total>=10" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" style="padding: 20px 0 5px" @pagination="getList" />
     <el-table
@@ -127,7 +128,7 @@
         <el-form-item :label="$t('table.date')" prop="timestamp">
           <el-date-picker v-model="temp.timestamp" type="datetime" placeholder="Please pick a date" />
         </el-form-item> -->
-        <el-form-item label="Content" prop="content" :rules="[{ required: true, message: 'Content cannot be empty!'}]">
+        <el-form-item label="Content" label-width="90px" prop="content" :rules="[{ required: true, message: 'Content cannot be empty!'}]">
           <el-input v-model="temp.content" type="textarea" :rows="3" />
         </el-form-item>
         <!-- <el-form-item :label="$t('table.status')">

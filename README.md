@@ -61,6 +61,7 @@ npm run lint -- --fix
 
 - [x] 单页工程搭建
 - [x] mock
+- [x] elementUI 按需引入
 - [ ] 评价页面demo，crud，搜索框优化
 - [ ] 工程结构优化
 - [ ] 统一异常处理

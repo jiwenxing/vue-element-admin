@@ -3,6 +3,7 @@ import Vue from 'vue'
 import 'normalize.css/normalize.css' // A modern alternative to CSS resets
 
 import './plugins/element.js'
+// import './plugins/element-ui.js'
 
 import '@/styles/index.scss' // global css
 

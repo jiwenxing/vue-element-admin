@@ -44,8 +44,9 @@ export const constantRoutes = [
   },
 
   {
-    path: '/comments',
+    path: '/',
     component: Layout,
+    redirect: '/index',
     children: [{
       path: 'index',
       name: 'Comments',
