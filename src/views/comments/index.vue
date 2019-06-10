@@ -27,12 +27,6 @@
         <el-select v-model="listQuery.importance" placeholder="category3" clearable style="width: 120px" class="filter-item bottom-space">
           <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
         </el-select>
-        <el-select v-model="listQuery.type" clearable class="filter-item bottom-space" style="width: 130px">
-          <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name+'('+item.key+')'" :value="item.key" />
-        </el-select>
-        <el-select v-model="listQuery.sort" style="width: 140px" class="filter-item bottom-space" @change="handleFilter">
-          <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key" />
-        </el-select>
 
         <el-button v-waves class="filter-item bottom-space" type="primary" icon="el-icon-search" @click="handleFilter">
           Search
@@ -40,33 +34,7 @@
         <el-button v-waves class="filter-item bottom-space" type="danger" icon="el-icon-delete" @click="resetSearch">
           Clear
         </el-button>
-        <!-- <el-button v-waves :loading="downloadLoading" class="filter-item bottom-space" type="primary" icon="el-icon-download" @click="handleDownload">
-          Export
-        </el-button> -->
       </div>
-      <!-- <div v-if="showAll">
-        <el-input v-model="listQuery.keyword" placeholder="keyword" style="width: 200px" class="filter-item bottom-space" @keyup.enter.native="handleFilter" />
-        <el-select v-model="listQuery.importance" placeholder="category1" clearable style="width: 120px" class="filter-item bottom-space">
-          <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
-        </el-select>
-        <el-select v-model="listQuery.importance" placeholder="category2" clearable style="width: 120px" class="filter-item bottom-space">
-          <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
-        </el-select>
-        <el-select v-model="listQuery.importance" placeholder="category3" clearable style="width: 120px" class="filter-item bottom-space">
-          <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
-        </el-select>
-        <el-select v-model="listQuery.type" clearable class="filter-item bottom-space" style="width: 130px">
-          <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name+'('+item.key+')'" :value="item.key" />
-        </el-select>
-        <el-select v-model="listQuery.sort" style="width: 140px" class="filter-item bottom-space" @change="handleFilter">
-          <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key" />
-        </el-select>
-      </div>
-      <div class="demo-block-control" style="left: 0px;" @click="showAll = !showAll">
-        <i :class="[showAll ? 'el-icon-caret-top' : 'el-icon-caret-bottom']" />
-        <span v-if="showAll" class="tips">hide search options</span>
-        <span v-else class="tips">show more search options</span>
-      </div> -->
     </div>
 
     <pagination v-show="total>=10" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" style="padding: 20px 0 5px" @pagination="getList" />
@@ -78,32 +46,33 @@
       fit
       highlight-current-row
       style="width: 100%;"
-      @sort-change="sortChange"
+      @selection-change="handleSelectionChange"
     >
-      <el-table-column label="id" prop="id" sortable="custom" align="center" width="80">
+      <el-table-column type="selection" align="center" />
+      <!-- <el-table-column label="id" prop="id" sortable="custom" align="center" width="80">
         <template slot-scope="scope">
           <span>{{ scope.row.id }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="Sku" align="center" width="95">
         <template slot-scope="{row}">
-          <span v-if="row.pageviews">{{ row.pageviews }}</span>
+          <span v-if="row.sku">{{ row.sku }}</span>
           <span v-else>0</span>
         </template>
       </el-table-column>
       <el-table-column label="Commodity Name" min-width="120px">
         <template slot-scope="{row}">
-          <a :href="'https://item.jd.com/' + row.pageviews + '.html'" target="_blank" class="link-type">{{ row.title }}</a>
+          <a :href="'https://item.jd.com/' + row.sku + '.html'" target="_blank" class="link-type">{{ row.title }}</a>
         </template>
       </el-table-column>
       <el-table-column label="Pin" width="110px" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.author }}</span>
+          <span>{{ scope.row.pin }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Content" min-width="150px">
         <template slot-scope="{row}">
-          <span class="link-type" @click="handleUpdate(row)">{{ row.title }}</span>
+          <span class="link-type" @click="handleUpdate(row)">{{ row.content }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Score" width="100px">
@@ -156,8 +125,8 @@
         <el-form-item :label="$t('table.date')" prop="timestamp">
           <el-date-picker v-model="temp.timestamp" type="datetime" placeholder="Please pick a date" />
         </el-form-item> -->
-        <el-form-item label="Content" prop="title">
-          <el-input v-model="temp.title" type="textarea" :rows="3" />
+        <el-form-item label="Content" prop="content">
+          <el-input v-model="temp.content" type="textarea" :rows="3" />
         </el-form-item>
         <!-- <el-form-item :label="$t('table.status')">
           <el-select v-model="temp.status" class="filter-item bottom-space" placeholder="Please select">
@@ -194,23 +163,17 @@
 </template>
 
 <script>
-import { fetchPv, createArticle, updateArticle } from '@/api/article'
-import { fetchList } from '@/api/comment'
+import { fetchPv, createArticle } from '@/api/article'
+import { fetchList, updateContent } from '@/api/comment'
 import waves from '@/directive/waves' // waves directive
+import { getToken } from '@/utils/auth' // get token from cookie
 // import { parseTime } from '@/utils/index'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
-const calendarTypeOptions = [
-  { key: 'CN', display_name: 'China' },
-  { key: 'US', display_name: 'USA' },
-  { key: 'JP', display_name: 'Japan' },
-  { key: 'EU', display_name: 'Eurozone' }
-]
-
 const auditStatusOptions = [
-  { key: '1', display_name: 'Passed' },
-  { key: '-1', display_name: 'Deleted' },
-  { key: '2', display_name: 'Auditing' }
+  { key: 'passed', display_name: 'Passed' },
+  { key: 'deleted', display_name: 'Deleted' },
+  { key: 'auditing', display_name: 'Auditing' }
 ]
 
 const gradeOptions = [
@@ -227,12 +190,6 @@ const shareStatusOptions = [
   { key: '1', display_name: 'No' }
 ]
 
-// arr to obj, such as { CN : "China", US : "USA" }
-const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
-  acc[cur.key] = cur.display_name
-  return acc
-}, {})
-
 export default {
   name: 'ComplexTable',
   components: { Pagination },
@@ -245,14 +202,12 @@ export default {
         deleted: 'danger'
       }
       return statusMap[status]
-    },
-    typeFilter(type) {
-      return calendarTypeKeyValue[type]
     }
   },
   data() {
     return {
       showAll: false,
+      multipleSelection: [],
       tableKey: 0,
       list: null,
       total: 0,
@@ -266,12 +221,10 @@ export default {
         sort: '+id'
       },
       importanceOptions: [1, 2, 3],
-      calendarTypeOptions,
       auditStatusOptions,
       gradeOptions,
       topStatusOptions,
       shareStatusOptions,
-      sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
       statusOptions: ['passed', 'auditing', 'deleted'],
       showReviewer: false,
       temp: {
@@ -331,6 +284,7 @@ export default {
       this.listQuery.orderId = ''
       this.listQuery.grade = ''
       this.listQuery.topStatus = ''
+      this.getList()
     },
     cancelEdit(row) {
       row.content = row.originalContent
@@ -360,6 +314,9 @@ export default {
       if (prop === 'id') {
         this.sortByID(order)
       }
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val
     },
     sortByID(order) {
       if (order === 'ascending') {
@@ -409,6 +366,7 @@ export default {
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
       this.temp.timestamp = new Date(this.temp.timestamp)
+      this.temp.token = getToken()
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -420,7 +378,7 @@ export default {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
           tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          updateArticle(tempData).then(() => {
+          updateContent(tempData).then(() => {
             for (const v of this.list) {
               if (v.id === this.temp.id) {
                 const index = this.list.indexOf(v)
