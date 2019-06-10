@@ -18,3 +18,8 @@ npm install -g serve
 serve -s dist
 ```
 
+## icon
+https://panjiachen.github.io/vue-element-admin-site/zh/guide/advanced/icon.html#%E7%94%9F%E6%88%90%E5%9B%BE%E6%A0%87%E5%BA%93%E4%BB%A3%E7%A0%81
+icon 使用请参考[此处]()
+为保持风格一致，icon 下载请设置颜色为 #e6e6e6
+
