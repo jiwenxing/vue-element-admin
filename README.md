@@ -57,6 +57,15 @@ npm run lint
 npm run lint -- --fix
 ```
 
+## todo
+
+- [x] 单页工程搭建
+- [x] mock
+- [ ] 评价页面demo，crud，搜索框优化
+- [ ] 工程结构优化
+- [ ] 统一异常处理
+- [ ] 登陆拦截
+
 
 
 
