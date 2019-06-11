@@ -4,7 +4,7 @@
   "description": "admin based on vue",
   "author": "jiwenxing",
   "scripts": {
-    "lint": "eslint --ext .js,.vue src",
+    "lint": "eslint --fix --ext .js,.vue src",
     "build:prod": "vue-cli-service build",
     "build:stage": "vue-cli-service build --mode staging",
     "dev": "vue-cli-service serve",
