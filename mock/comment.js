@@ -1,7 +1,7 @@
 import Mock from 'mockjs'
 
 const List = []
-const count = 31
+const count = 81
 
 // const baseContent = '<p>I am testing data, I am testing data.</p><p><img src="https://wpimg.wallstcn.com/4c69009c-0fd4-4153-b112-6cb53d1cf943"></p>'
 const image_uri = 'https://wpimg.wallstcn.com/e4558086-631c-425c-9430-56ffb46e70b3'
@@ -12,13 +12,15 @@ for (let i = 0; i < count; i++) {
     timestamp: +Mock.Random.date('T'),
     pin: '@first',
     reviewer: '@first',
+    category: '@first',
     title: '@title(5, 10)',
     content_short: 'mock data',
     content: '@sentence(3, 7)',
     forecast: '@float(0, 100, 2, 2)',
     importance: '@integer(1, 5)',
     'type|1': ['CN', 'US', 'JP', 'EU'],
-    'status|1': ['passed', 'auditing', 'deleted'],
+    'status|1': [1, 0, -1],
+    'topStatus|1': [1, 0, -1],
     display_time: '@datetime',
     comment_disabled: true,
     sku: '@integer(6000000, 9000000)',
@@ -32,14 +34,15 @@ export default [
     url: '/comment/list.*',
     type: 'get',
     response: config => {
-      const { importance, type, title, page = 1, limit = 20, auditStatus, sort, pin } = config.query
+      const { grade, topStatus, sku, keyword, page = 1, limit = 20, auditStatus, sort, pin } = config.query
 
       let mockList = List.filter(item => {
         if (pin && item.pin !== pin) return false
-        if (auditStatus && item.status !== auditStatus) return false
-        if (importance && item.importance !== +importance) return false
-        if (type && item.type !== type) return false
-        if (title && item.title.indexOf(title) < 0) return false
+        if (auditStatus && item.status !== Number(auditStatus)) return false
+        if (topStatus && item.topStatus !== Number(topStatus)) return false
+        if (grade && item.importance !== +Number(grade)) return false
+        if (sku && item.sku !== Number(sku)) return false
+        if (keyword && item.content.indexOf(keyword) < 0) return false
         return true
       })
 

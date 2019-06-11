@@ -18,7 +18,9 @@
           <el-option v-for="item in shareStatusOptions" :key="item.key" :label="item.display_name" :value="item.key" />
         </el-select>
         <el-input v-model="listQuery.keyword" placeholder="keyword" style="width: 200px" class="filter-item bottom-space" @keyup.enter.native="handleFilter" />
+
         <category @cate-change="listQuery.category=$event" />
+        <date-time-picker @time-change="listQuery.timeRange=$event" />
 
         <el-button v-waves class="filter-item bottom-space" type="primary" icon="el-icon-search" @click="handleFilter">
           Search
@@ -41,68 +43,97 @@
       style="width: 100%;"
       @selection-change="handleSelectionChange"
     >
-      <el-table-column type="selection" align="center" />
-      <!-- <el-table-column label="id" prop="id" sortable="custom" align="center" width="80">
-        <template slot-scope="scope">
-          <span>{{ scope.row.id }}</span>
+      <el-table-column type="expand">
+        <template slot-scope="{row}">
+          <el-form label-position="left" inline class="demo-table-expand">
+            <el-form-item label="Comment ID">
+              <span>{{ row.id }}</span>
+            </el-form-item>
+            <el-form-item label="Reviewer">
+              <span>{{ row.reviewer }}</span>
+            </el-form-item>
+            <el-form-item label="Shop Name">
+              <span>{{ row.title }}</span>
+            </el-form-item>
+            <el-form-item label="Price">
+              <span>{{ row.forecast }}</span>
+            </el-form-item>
+            <el-form-item label="Category">
+              <span>{{ row.category }}</span>
+            </el-form-item>
+          </el-form>
         </template>
-      </el-table-column> -->
-      <el-table-column label="Sku" align="center" width="95">
+      </el-table-column>
+      <el-table-column type="selection" align="center" />
+      <el-table-column label="Sku" align="center" min-width="100">
         <template slot-scope="{row}">
           <span v-if="row.sku">{{ row.sku }}</span>
           <span v-else>0</span>
         </template>
       </el-table-column>
-      <el-table-column label="Commodity Name" min-width="120px">
+      <el-table-column label="Commodity Name" min-width="200px">
         <template slot-scope="{row}">
-          <a :href="'https://item.jd.com/' + row.sku + '.html'" target="_blank">{{ row.title }}</a>
-          <i class="el-icon-link">aa</i>
+          <el-link icon="el-icon-link" :underline="false" type="info" :href="'https://item.jd.com/' + row.sku + '.html'" target="_blank">{{ row.title }}</el-link>
         </template>
       </el-table-column>
-      <el-table-column label="Pin" width="110px" align="center">
+      <el-table-column label="Pin" min-width="100px" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.pin }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Content" min-width="150px">
+      <el-table-column label="Content" min-width="200px">
         <template slot-scope="{row}">
           <span>{{ row.content }}</span>
           <el-button size="mini" icon="el-icon-edit" @click="handleUpdate(row)" />
         </template>
       </el-table-column>
-      <el-table-column label="Score" width="100px">
+      <el-table-column label="Score" width="95px">
         <template slot-scope="scope">
           <svg-icon v-for="n in +scope.row.importance" :key="n" icon-class="star" class="meta-item__icon" />
         </template>
       </el-table-column>
-      <el-table-column label="status" class-name="status-col" width="100">
+      <el-table-column label="Audit Status" class-name="status-col" min-width="110">
         <template slot-scope="{row}">
           <el-tag :type="row.status | statusFilter">
-            {{ row.status }}
+            {{ row.status | statusShowFilter }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="Comment Time" width="160px" align="center">
+      <el-table-column label="Top Status" class-name="status-col" width="110">
+        <template slot-scope="{row}">
+          <el-tag :type="row.topStatus | statusFilter" effect="plain">
+            <i :class="row.topStatus | topStatusIconFilter" />
+            {{ row.topStatus | topStatusShowFilter }}
+          </el-tag>
+          <!-- <i :class="row.topStatus | topStatusIconFilter" />
+          {{ row.topStatus | topStatusShowFilter }} -->
+        </template>
+      </el-table-column>
+      <el-table-column label="Comment Time" width="180px" align="center">
         <template slot-scope="scope">
+          <i class="el-icon-time" />
           <span>{{ scope.row.display_time }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="actions" align="center" width="230" class-name="small-padding fixed-width">
+      <el-table-column label="Actions" align="center" width="430" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <!-- <el-button type="primary" size="mini" @click="handleUpdate(row)">
-            {{ $t('table.edit') }}
-          </el-button> -->
-          <el-button v-if="row.status=='passed'" size="mini" type="danger" @click="handleModifyStatus(row,'deleted')">
+          <el-button v-if="row.status==1" size="mini" type="danger" @click="handleModifyStatus(row, -1)">
             Delete
           </el-button>
-          <el-button v-if="row.status=='deleted'" size="mini" type="success" @click="handleModifyStatus(row,'passed')">
+          <el-button v-if="row.status==-1" size="mini" type="success" @click="handleModifyStatus(row, 1)">
             Pass
           </el-button>
-          <el-button v-if="row.status=='auditing'" size="mini" type="success" @click="handleModifyStatus(row,'passed')">
+          <el-button v-if="row.status==0" size="mini" type="success" @click="handleModifyStatus(row, 1)">
             Passed
           </el-button>
-          <el-button v-if="row.status=='auditing'" size="mini" type="danger" @click="handleModifyStatus(row,'deleted')">
+          <el-button v-if="row.status==0" size="mini" type="danger" @click="handleModifyStatus(row, -1)">
             Delete
+          </el-button>
+          <el-button v-if="(row.topStatus==0 || row.topStatus==-1) && row.status==1" size="mini" type="success" @click="handleModifyTopStatus(row, 1)">
+            Top
+          </el-button>
+          <el-button v-if="(row.topStatus==0 || row.topStatus==1) && row.status==1" size="mini" type="danger" @click="handleModifyTopStatus(row, -1)">
+            Sink
           </el-button>
         </template>
       </el-table-column>
@@ -112,12 +143,12 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 500px; margin-left:50px;">
-        <!-- <el-form-item :label="$t('table.type')" prop="type">
+        <!-- <el-form-item label="Begin Time" prop="type">
           <el-select v-model="temp.type" class="filter-item bottom-space" placeholder="Please select">
             <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
           </el-select>
         </el-form-item>
-        <el-form-item :label="$t('table.date')" prop="timestamp">
+        <el-form-item label="End Time" prop="timestamp">
           <el-date-picker v-model="temp.timestamp" type="datetime" placeholder="Please pick a date" />
         </el-form-item> -->
         <el-form-item label="Content" label-width="90px" prop="content" :rules="[{ required: true, message: 'Content cannot be empty!'}]">
@@ -165,11 +196,12 @@ import { getToken } from '@/utils/auth' // get token from cookie
 // import { parseTime } from '@/utils/index'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import Category from '@/components/Category'
+import DateTimePicker from '@/components/DateTimePicker'
 
 const auditStatusOptions = [
-  { key: 'passed', display_name: 'Passed' },
-  { key: 'deleted', display_name: 'Deleted' },
-  { key: 'auditing', display_name: 'Auditing' }
+  { key: 1, display_name: 'Passed' },
+  { key: -1, display_name: 'Deleted' },
+  { key: 0, display_name: 'Auditing' }
 ]
 
 const gradeOptions = [
@@ -188,14 +220,38 @@ const shareStatusOptions = [
 
 export default {
   name: 'ComplexTable',
-  components: { Pagination, Category },
+  components: { Pagination, Category, DateTimePicker },
   directives: { waves },
   filters: {
     statusFilter(status) {
       const statusMap = {
-        passed: 'success',
-        auditing: 'info',
-        deleted: 'danger'
+        '1': 'success',
+        '0': 'info',
+        '-1': 'danger'
+      }
+      return statusMap[status]
+    },
+    statusShowFilter(status) {
+      const statusMap = {
+        '1': 'Passed',
+        '0': 'Auditing',
+        '-1': 'Deleted'
+      }
+      return statusMap[status]
+    },
+    topStatusIconFilter(status) {
+      const statusMap = {
+        '1': 'el-icon-top',
+        '0': 'el-icon-minus',
+        '-1': 'el-icon-bottom'
+      }
+      return statusMap[status]
+    },
+    topStatusShowFilter(status) {
+      const statusMap = {
+        '1': 'Topped',
+        '0': 'Normal',
+        '-1': 'Sinked'
       }
       return statusMap[status]
     }
@@ -211,7 +267,7 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
-        importance: undefined,
+        auditStatus: 0,
         title: undefined,
         type: undefined,
         sort: '+id'
@@ -245,202 +301,7 @@ export default {
         timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
         title: [{ required: true, message: 'content is required', trigger: 'blur' }]
       },
-      downloadLoading: false,
-      options: [{
-        value: 'zhinan',
-        label: '指南',
-        children: [{
-          value: 'shejiyuanze',
-          label: '设计原则',
-          children: [{
-            value: 'yizhi',
-            label: '一致'
-          }, {
-            value: 'fankui',
-            label: '反馈'
-          }, {
-            value: 'xiaolv',
-            label: '效率'
-          }, {
-            value: 'kekong',
-            label: '可控'
-          }]
-        }, {
-          value: 'daohang',
-          label: '导航',
-          children: [{
-            value: 'cexiangdaohang',
-            label: '侧向导航'
-          }, {
-            value: 'dingbudaohang',
-            label: '顶部导航'
-          }]
-        }]
-      }, {
-        value: 'zujian',
-        label: '组件',
-        children: [{
-          value: 'basic',
-          label: 'Basic',
-          children: [{
-            value: 'layout',
-            label: 'Layout 布局'
-          }, {
-            value: 'color',
-            label: 'Color 色彩'
-          }, {
-            value: 'typography',
-            label: 'Typography 字体'
-          }, {
-            value: 'icon',
-            label: 'Icon 图标'
-          }, {
-            value: 'button',
-            label: 'Button 按钮'
-          }]
-        }, {
-          value: 'form',
-          label: 'Form',
-          children: [{
-            value: 'radio',
-            label: 'Radio 单选框'
-          }, {
-            value: 'checkbox',
-            label: 'Checkbox 多选框'
-          }, {
-            value: 'input',
-            label: 'Input 输入框'
-          }, {
-            value: 'input-number',
-            label: 'InputNumber 计数器'
-          }, {
-            value: 'select',
-            label: 'Select 选择器'
-          }, {
-            value: 'cascader',
-            label: 'Cascader 级联选择器'
-          }, {
-            value: 'switch',
-            label: 'Switch 开关'
-          }, {
-            value: 'slider',
-            label: 'Slider 滑块'
-          }, {
-            value: 'time-picker',
-            label: 'TimePicker 时间选择器'
-          }, {
-            value: 'date-picker',
-            label: 'DatePicker 日期选择器'
-          }, {
-            value: 'datetime-picker',
-            label: 'DateTimePicker 日期时间选择器'
-          }, {
-            value: 'upload',
-            label: 'Upload 上传'
-          }, {
-            value: 'rate',
-            label: 'Rate 评分'
-          }, {
-            value: 'form',
-            label: 'Form 表单'
-          }]
-        }, {
-          value: 'data',
-          label: 'Data',
-          children: [{
-            value: 'table',
-            label: 'Table 表格'
-          }, {
-            value: 'tag',
-            label: 'Tag 标签'
-          }, {
-            value: 'progress',
-            label: 'Progress 进度条'
-          }, {
-            value: 'tree',
-            label: 'Tree 树形控件'
-          }, {
-            value: 'pagination',
-            label: 'Pagination 分页'
-          }, {
-            value: 'badge',
-            label: 'Badge 标记'
-          }]
-        }, {
-          value: 'notice',
-          label: 'Notice',
-          children: [{
-            value: 'alert',
-            label: 'Alert 警告'
-          }, {
-            value: 'loading',
-            label: 'Loading 加载'
-          }, {
-            value: 'message',
-            label: 'Message 消息提示'
-          }, {
-            value: 'message-box',
-            label: 'MessageBox 弹框'
-          }, {
-            value: 'notification',
-            label: 'Notification 通知'
-          }]
-        }, {
-          value: 'navigation',
-          label: 'Navigation',
-          children: [{
-            value: 'menu',
-            label: 'NavMenu 导航菜单'
-          }, {
-            value: 'tabs',
-            label: 'Tabs 标签页'
-          }, {
-            value: 'breadcrumb',
-            label: 'Breadcrumb 面包屑'
-          }, {
-            value: 'dropdown',
-            label: 'Dropdown 下拉菜单'
-          }, {
-            value: 'steps',
-            label: 'Steps 步骤条'
-          }]
-        }, {
-          value: 'others',
-          label: 'Others',
-          children: [{
-            value: 'dialog',
-            label: 'Dialog 对话框'
-          }, {
-            value: 'tooltip',
-            label: 'Tooltip 文字提示'
-          }, {
-            value: 'popover',
-            label: 'Popover 弹出框'
-          }, {
-            value: 'card',
-            label: 'Card 卡片'
-          }, {
-            value: 'carousel',
-            label: 'Carousel 走马灯'
-          }, {
-            value: 'collapse',
-            label: 'Collapse 折叠面板'
-          }]
-        }]
-      }, {
-        value: 'ziyuan',
-        label: '资源',
-        children: [{
-          value: 'axure',
-          label: 'Axure Components'
-        }, {
-          value: 'sketch',
-          label: 'Sketch Templates'
-        }, {
-          value: 'jiaohu',
-          label: '组件交互文档'
-        }]
-      }]
+      downloadLoading: false
     }
   },
   created() {
@@ -475,6 +336,7 @@ export default {
       this.listQuery.orderId = ''
       this.listQuery.grade = ''
       this.listQuery.topStatus = ''
+      this.listQuery.keyword = ''
       this.getList()
     },
     cancelEdit(row) {
@@ -499,6 +361,13 @@ export default {
         type: 'success'
       })
       row.status = status
+    },
+    handleModifyTopStatus(row, status) {
+      this.$message({
+        message: '操作成功',
+        type: 'success'
+      })
+      row.topStatus = status
     },
     sortChange(data) {
       const { prop, order } = data
@@ -604,29 +473,6 @@ export default {
         this.dialogPvVisible = true
       })
     }
-    // handleDownload() {
-    //   this.downloadLoading = true
-    //   import('@/vendor/Export2Excel').then(excel => {
-    //     const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
-    //     const filterVal = ['timestamp', 'title', 'type', 'importance', 'status']
-    //     const data = this.formatJson(filterVal, this.list)
-    //     excel.export_json_to_excel({
-    //       header: tHeader,
-    //       data,
-    //       filename: 'table-list'
-    //     })
-    //     this.downloadLoading = false
-    //   })
-    // },
-    // formatJson(filterVal, jsonData) {
-    //   return jsonData.map(v => filterVal.map(j => {
-    //     if (j === 'timestamp') {
-    //       return parseTime(v[j])
-    //     } else {
-    //       return v[j]
-    //     }
-    //   }))
-    // }
   }
 }
 </script>
@@ -642,6 +488,18 @@ export default {
 }
 .bottom-space {
   margin-bottom: 5px;
+}
+/* .demo-table-expand {
+  font-size: 0;
+} */
+/* .demo-table-expand label {
+  width: 90px;
+  color: #99a9bf;
+} */
+.demo-table-expand .el-form-item {
+  margin-right: 0;
+  margin-bottom: 0;
+  display: block;
 }
 /* .demo-block-control{box-sizing:border-box;background-color:#fff;border-bottom-left-radius:4px;border-bottom-right-radius:4px;text-align:center;margin-top:-1px;color:#d3dce6;cursor:pointer;position:relative}
 .demo-block-control:hover{color:#409eff;background-color:#f9fafc} */
