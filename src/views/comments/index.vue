@@ -18,23 +18,7 @@
           <el-option v-for="item in shareStatusOptions" :key="item.key" :label="item.display_name" :value="item.key" />
         </el-select>
         <el-input v-model="listQuery.keyword" placeholder="keyword" style="width: 200px" class="filter-item bottom-space" @keyup.enter.native="handleFilter" />
-        <!-- <el-select v-model="listQuery.importance" placeholder="category1" clearable style="width: 120px" class="filter-item bottom-space">
-          <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
-        </el-select>
-        <el-select v-model="listQuery.importance" placeholder="category2" clearable style="width: 120px" class="filter-item bottom-space">
-          <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
-        </el-select>
-        <el-select v-model="listQuery.importance" placeholder="category3" clearable style="width: 120px" class="filter-item bottom-space">
-          <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
-        </el-select> -->
-        <!-- <span class="demonstration">category</span> -->
-        <!-- <el-cascader
-          placeholder="category"
-          :options="options"
-          :props="{ checkStrictly: true }"
-          clearable
-        /> -->
-        <category />
+        <category @cate-change="listQuery.category=$event" />
 
         <el-button v-waves class="filter-item bottom-space" type="primary" icon="el-icon-search" @click="handleFilter">
           Search
