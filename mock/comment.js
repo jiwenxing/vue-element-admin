@@ -9,6 +9,7 @@ const image_uri = 'https://wpimg.wallstcn.com/e4558086-631c-425c-9430-56ffb46e70
 for (let i = 0; i < count; i++) {
   List.push(Mock.mock({
     id: '@increment',
+    guid: '@guid',
     timestamp: +Mock.Random.date('T'),
     pin: '@first',
     ip: '@ip',
@@ -16,7 +17,7 @@ for (let i = 0; i < count; i++) {
     category: '@first',
     title: '@title(5, 10)',
     content_short: 'mock data',
-    content: '@sentence(3, 7)',
+    content: '@sentence(3, 27)',
     forecast: '@float(0, 100, 2, 2)',
     score: '@integer(1, 5)',
     'type|1': ['CN', 'US', 'JP', 'EU'],
@@ -26,6 +27,7 @@ for (let i = 0; i < count; i++) {
     display_time: '@datetime',
     comment_disabled: true,
     sku: '@integer(6000000, 9000000)',
+    orderId: '@integer(4000000000, 9000000000)',
     image_uri,
     platforms: ['a-platform']
   }))

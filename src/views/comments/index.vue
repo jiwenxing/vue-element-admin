@@ -75,13 +75,19 @@
             <el-form-item label="Comment ID:">
               <span>{{ row.id }}</span>
             </el-form-item>
+            <el-form-item label="Guid:">
+              <span>{{ row.guid }}</span>
+            </el-form-item>
+            <el-form-item label="Order ID:">
+              <span>{{ row.orderId }}</span>
+            </el-form-item>
             <el-form-item label="Top Status:">
               <span>{{ row.topStatus | topStatusShowFilter }}</span>
             </el-form-item>
             <el-form-item label="User Nick Name:">
               <span>{{ row.reviewer }}</span>
             </el-form-item>
-            <el-form-item label="Shop Name:">
+            <el-form-item label="Commodity Name:">
               <span>{{ row.title }}</span>
             </el-form-item>
             <el-form-item label="Price:">
@@ -100,7 +106,7 @@
         </template>
       </el-table-column>
       <el-table-column type="selection" align="center" />
-      <el-table-column label="Sku" align="center" min-width="100">
+      <!-- <el-table-column label="Sku" align="center" min-width="100">
         <template slot-scope="{row}">
           <span v-if="row.sku">{{ row.sku }}</span>
           <span v-else>0</span>
@@ -109,6 +115,14 @@
       <el-table-column label="Commodity Name" min-width="200px" :show-overflow-tooltip="true">
         <template slot-scope="{row}">
           <el-link icon="el-icon-link" :underline="false" type="info" :href="'https://item.jd.com/' + row.sku + '.html'" target="_blank">{{ row.title }}</el-link>
+        </template>
+      </el-table-column> -->
+      <el-table-column label="Commodity" min-width="100px">
+        <template slot-scope="{row}">
+          <el-tooltip placement="top">
+            <div slot="content">{{ row.title }}</div>
+            <el-link icon="el-icon-link" :underline="false" type="info" :href="'https://item.jd.com/' + row.sku + '.html'" target="_blank">{{ row.sku }}</el-link>
+          </el-tooltip>
         </template>
       </el-table-column>
       <el-table-column label="Pin" min-width="100px" align="center">
@@ -147,7 +161,7 @@
           <el-tag :type="row.status | statusFilter">
             {{ row.status | statusShowFilter }}
           </el-tag>
-          <el-tag v-if="row.status==1" :type="row.topStatus | statusFilter" effect="plain">
+          <el-tag v-if="row.status==1 && row.topStatus!=0" :type="row.topStatus | statusFilter" effect="plain">
             <i :class="row.topStatus | topStatusIconFilter" />
             <!-- {{ row.topStatus | topStatusShowFilter }} -->
           </el-tag>
@@ -178,6 +192,9 @@
           </el-button>
           <el-button v-if="(row.topStatus==0 || row.topStatus==1) && row.status==1" size="mini" type="danger" @click="handleModifyTopStatus(row, -1)">
             Sink
+          </el-button>
+          <el-button v-if="(row.status==1 && row.topStatus!=0) && row.status==1" size="mini" type="info" @click="handleModifyTopStatus(row, 0)">
+            Nomal
           </el-button>
         </template>
       </el-table-column>
