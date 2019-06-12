@@ -9,6 +9,7 @@
 - [vue-cli](https://github.com/vuejs/vue-cli)
 - [axios](https://github.com/axios/axios)
 - [element-ui](https://github.com/ElemeFE/element)
+- [Mock.js](https://github.com/nuysoft/Mock/wiki)
 
 ## Build Setup
 
