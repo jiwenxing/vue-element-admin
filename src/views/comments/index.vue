@@ -16,7 +16,7 @@
         <el-form-item label="Order ID">
           <el-input v-model="listQuery.orderId" placeholder="order number" style="width: 150px" class="filter-item bottom-space" @keyup.enter.native="handleFilter" />
         </el-form-item>
-        <br />
+        <br>
         <el-form-item label="Top Status">
           <el-select v-model="listQuery.topStatus" placeholder="top status" clearable style="width: 150px" class="filter-item bottom-space">
             <el-option v-for="item in topStatusOptions" :key="item.key" :label="item.display_name" :value="item.key" />
@@ -35,7 +35,7 @@
         <el-form-item label="Nick Name">
           <el-input v-model="listQuery.orderId" placeholder="nick name" style="width: 150px" class="filter-item bottom-space" @keyup.enter.native="handleFilter" />
         </el-form-item>
-        <br />
+        <br>
 
         <el-form-item label="Keyword">
           <el-input v-model="listQuery.keyword" placeholder="keyword" style="width: 435px" class="filter-item bottom-space" @keyup.enter.native="handleFilter" />
@@ -43,7 +43,7 @@
         <el-form-item label="Category">
           <category @cate-change="listQuery.category=$event" />
         </el-form-item>
-        <br />
+        <br>
         <el-form-item label="Comment Time">
           <date-time-picker @time-change="listQuery.timeRange=$event" />
         </el-form-item>
@@ -62,6 +62,7 @@
       :key="tableKey"
       v-loading="listLoading"
       :data="list"
+      :row-class-name="tableRowClassName"
       border
       fit
       highlight-current-row
@@ -71,23 +72,29 @@
       <el-table-column type="expand">
         <template slot-scope="{row}">
           <el-form label-position="left" inline class="demo-table-expand">
-            <el-form-item label="Comment ID">
+            <el-form-item label="Comment ID:">
               <span>{{ row.id }}</span>
             </el-form-item>
-            <el-form-item label="Top Status">
+            <el-form-item label="Top Status:">
               <span>{{ row.topStatus | topStatusShowFilter }}</span>
             </el-form-item>
-            <el-form-item label="User Nick Name">
+            <el-form-item label="User Nick Name:">
               <span>{{ row.reviewer }}</span>
             </el-form-item>
-            <el-form-item label="Shop Name">
+            <el-form-item label="Shop Name:">
               <span>{{ row.title }}</span>
             </el-form-item>
-            <el-form-item label="Price">
+            <el-form-item label="Price:">
               <span>{{ row.forecast }}</span>
             </el-form-item>
-            <el-form-item label="Category">
+            <el-form-item label="Category:">
               <span>{{ row.category }}</span>
+            </el-form-item>
+            <el-form-item label="IP:">
+              <span>{{ row.ip }}</span>
+            </el-form-item>
+            <el-form-item label="Client Type:">
+              <span>{{ row.clientType }}</span>
             </el-form-item>
           </el-form>
         </template>
@@ -99,7 +106,7 @@
           <span v-else>0</span>
         </template>
       </el-table-column>
-      <el-table-column label="Commodity Name" min-width="200px">
+      <el-table-column label="Commodity Name" min-width="200px" :show-overflow-tooltip="true">
         <template slot-scope="{row}">
           <el-link icon="el-icon-link" :underline="false" type="info" :href="'https://item.jd.com/' + row.sku + '.html'" target="_blank">{{ row.title }}</el-link>
         </template>
@@ -109,7 +116,7 @@
           <span>{{ scope.row.pin }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Content" min-width="200px">
+      <el-table-column label="Content" min-width="300px">
         <template slot-scope="{row}">
           <span>{{ row.content }}</span>
           <el-button size="mini" icon="el-icon-edit" @click="handleUpdate(row)" />
@@ -117,7 +124,7 @@
       </el-table-column>
       <el-table-column label="Score" width="95px">
         <template slot-scope="scope">
-          <svg-icon v-for="n in +scope.row.importance" :key="n" icon-class="star" class="meta-item__icon" />
+          <svg-icon v-for="n in +scope.row.score" :key="n" icon-class="star" class="meta-item__icon" />
         </template>
       </el-table-column>
       <!-- <el-table-column label="Audit Status" class-name="status-col" min-width="110">
@@ -309,7 +316,7 @@ export default {
         type: undefined,
         sort: '+id'
       },
-      importanceOptions: [1, 2, 3],
+      scoreOptions: [1, 2, 3],
       auditStatusOptions,
       gradeOptions,
       topStatusOptions,
@@ -318,7 +325,7 @@ export default {
       showReviewer: false,
       temp: {
         id: undefined,
-        importance: 1,
+        score: 1,
         remark: '',
         timestamp: new Date(),
         title: '',
@@ -376,6 +383,14 @@ export default {
       this.listQuery.keyword = ''
       this.getList()
     },
+    tableRowClassName({ row, rowIndex }) {
+      if (row.score === 1) {
+        return 'danger-row'
+      } else if (row.score < 4) {
+        return 'warning-row'
+      }
+      return ''
+    },
     cancelEdit(row) {
       row.content = row.originalContent
       row.edit = false
@@ -426,7 +441,7 @@ export default {
     resetTemp() {
       this.temp = {
         id: undefined,
-        importance: 1,
+        score: 1,
         remark: '',
         timestamp: new Date(),
         title: '',
@@ -537,6 +552,13 @@ export default {
   margin-right: 0;
   margin-bottom: 0;
   display: block;
+}
+
+.warning-row {
+  background-color: #fff1de;
+}
+.danger-row {
+  background-color: #e2d2d5;
 }
 /* .demo-block-control{box-sizing:border-box;background-color:#fff;border-bottom-left-radius:4px;border-bottom-right-radius:4px;text-align:center;margin-top:-1px;color:#d3dce6;cursor:pointer;position:relative}
 .demo-block-control:hover{color:#409eff;background-color:#f9fafc} */
