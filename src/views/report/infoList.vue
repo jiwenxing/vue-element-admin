@@ -89,12 +89,14 @@
       </el-table-column>
       <el-table-column label="评价人" min-width="100px" align="center">
         <template slot-scope="{row}">
-          <span ref="reportInfoList" @click="testDialog = true">{{row.pin}}</span>
+          <span>{{row.pin}}</span>
         </template>
       </el-table-column>
       <el-table-column label="举报次数" min-width="100px" align="center">
         <template slot-scope="scope">
-          <el-button type="text" @click="openReportInfoList(row)">{{scope.row.importance}}</el-button>
+          <template>
+            <el-button type="text" @click="open">{{scope.row.importance}}</el-button>
+          </template>
         </template>
       </el-table-column>
       <el-table-column label="评价内容" min-width="200px">
@@ -157,15 +159,35 @@
       </el-table-column>
     </el-table>
 
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" style="padding: 20px 0 5px" @pagination="getList"/>
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit"
+                style="padding: 20px 0 5px" @pagination="getList"/>
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px"
                style="width: 500px; margin-left:50px;">
+        <!-- <el-form-item label="Begin Time" prop="type">
+          <el-select v-model="temp.type" class="filter-item bottom-space" placeholder="Please select">
+            <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="End Time" prop="timestamp">
+          <el-date-picker v-model="temp.timestamp" type="datetime" placeholder="Please pick a date" />
+        </el-form-item> -->
         <el-form-item label="Content" label-width="90px" prop="content"
                       :rules="[{ required: true, message: 'Content cannot be empty!'}]">
           <el-input v-model="temp.content" type="textarea" :rows="3"/>
         </el-form-item>
+        <!-- <el-form-item :label="$t('table.status')">
+          <el-select v-model="temp.status" class="filter-item bottom-space" placeholder="Please select">
+            <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
+          </el-select>
+        </el-form-item>
+        <el-form-item :label="$t('table.importance')">
+          <el-rate v-model="temp.importance" :colors="['#99A9BF', '#F7BA2A', '#FF9900']" :max="3" style="margin-top:8px;" />
+        </el-form-item> -->
+        <!-- <el-form-item :label="$t('table.remark')">
+          <el-input v-model="temp.remark" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="Please input" />
+        </el-form-item> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
@@ -185,124 +207,6 @@
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="dialogPvVisible = false">confirm</el-button>
       </span>
-    </el-dialog>
-<!--===================================================================================================-->
-    <el-dialog title="提示" :visible.sync="testDialog" width="30%" :before-close="handleClose">
-
-
-      <el-table :key="tableKey" v-loading="listLoading" :data="reportInfoList" border fit
-                highlight-current-row style="width: 100%;">
-        <el-table-column type="expand">
-          <template slot-scope="{row}">
-            <el-form label-position="left" inline class="demo-table-expand">
-              <el-form-item label="Comment ID">
-                <span>{{row.id}}</span>
-              </el-form-item>
-              <el-form-item label="Reviewer">
-                <span>{{row.reviewer}}</span>
-              </el-form-item>
-              <el-form-item label="Shop Name">
-                <span>{{row.title}}</span>
-              </el-form-item>
-              <el-form-item label="Price">
-                <span>{{row.forecast}}</span>
-              </el-form-item>
-              <el-form-item label="Category">
-                <span>{{row.category}}</span>
-              </el-form-item>
-            </el-form>
-          </template>
-        </el-table-column>
-        <el-table-column type="selection" align="center"/>
-        <el-table-column label="商品" align="center" min-width="100">
-          <template slot-scope="{row}">
-            <span v-if="row.sku">{{row.sku}}</span>
-            <span v-else>0</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="商品名称" min-width="200px">
-          <template slot-scope="{row}">
-            <el-link icon="el-icon-link" :underline="false" type="info" :href="'https://item.jd.com/' + row.sku + '.html'"
-                     target="_blank">{{row.title}}
-            </el-link>
-          </template>
-        </el-table-column>
-        <el-table-column label="评价人" min-width="100px" align="center">
-          <template slot-scope="{row}">
-            <span ref="reportInfoList" @click="testDialog = true">{{row.pin}}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="举报次数" min-width="100px" align="center">
-          <template slot-scope="scope">
-            <el-button type="text">{{scope.row.importance}}</el-button>
-          </template>
-        </el-table-column>
-        <el-table-column label="评价内容" min-width="200px">
-          <template slot-scope="{row}">
-            <span>{{row.content}}</span>
-            <el-button size="mini" icon="el-icon-edit" @click="handleUpdate(row)"/>
-          </template>
-        </el-table-column>
-        <el-table-column label="评分" width="95px">
-          <template slot-scope="scope">
-            <svg-icon v-for="n in +scope.row.importance" :key="n" icon-class="star" class="meta-item__icon"/>
-          </template>
-        </el-table-column>
-        <el-table-column label="Audit Status" class-name="status-col" min-width="110">
-          <template slot-scope="{row}">
-            <el-tag :type="row.status | statusFilter">
-              {{row.status | statusShowFilter}}
-            </el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column label="沉底置顶状态" class-name="status-col" width="110">
-          <template slot-scope="{row}">
-            <el-tag :type="row.topStatus | statusFilter" effect="plain">
-              <i :class="row.topStatus | topStatusIconFilter"/>
-              {{row.topStatus | topStatusShowFilter}}
-            </el-tag>
-            <!-- <i :class="row.topStatus | topStatusIconFilter" />
-            {{row.topStatus | topStatusShowFilter}} -->
-          </template>
-        </el-table-column>
-        <el-table-column label="评价时间" width="180px" align="center">
-          <template slot-scope="scope">
-            <i class="el-icon-time"/>
-            <span>{{scope.row.display_time}}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="Actions" align="center" width="430" class-name="small-padding fixed-width">
-          <template slot-scope="{row}">
-            <el-button v-if="row.status==1" size="mini" type="danger" @click="handleModifyStatus(row, -1)">
-              Delete
-            </el-button>
-            <el-button v-if="row.status==-1" size="mini" type="success" @click="handleModifyStatus(row, 1)">
-              Pass
-            </el-button>
-            <el-button v-if="row.status==0" size="mini" type="success" @click="handleModifyStatus(row, 1)">
-              Passed
-            </el-button>
-            <el-button v-if="row.status==0" size="mini" type="danger" @click="handleModifyStatus(row, -1)">
-              Delete
-            </el-button>
-            <el-button v-if="(row.topStatus==0 || row.topStatus==-1) && row.status==1" size="mini" type="success"
-                       @click="handleModifyTopStatus(row, 1)">
-              Top
-            </el-button>
-            <el-button v-if="(row.topStatus==0 || row.topStatus==1) && row.status==1" size="mini" type="danger"
-                       @click="handleModifyTopStatus(row, -1)">
-              Sink
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-
-
-
-
-
-
-
     </el-dialog>
   </div>
 </template>
@@ -414,7 +318,6 @@
           create: 'Create'
         },
         dialogPvVisible: false,
-        testDialog: false,
         pvData: [],
         rules: {
           type: [{required: true, message: 'type is required', trigger: 'change'}],
@@ -592,9 +495,6 @@
           this.pvData = response.data.pvData
           this.dialogPvVisible = true
         })
-      },
-      openReportInfoList(data) {
-        console.log(JSON.stringify(data));
       }
     }
   }

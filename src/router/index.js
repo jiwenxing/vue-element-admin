@@ -65,16 +65,27 @@ export const constantRoutes = [
       meta: { title: 'Show Order', icon: 'share' }
     }]
   },
-
+  {
+    path: '/reportTest',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'report',
+        component: () => import('@/views/reportTest/index'),
+        meta: { title: 'Report', icon: 'report' }
+      }
+    ]
+  },
   {
     path: '/report',
     component: Layout,
     children: [
       {
         path: 'index',
-        name: 'Report',
+        name: 'report',
         component: () => import('@/views/report/index'),
-        meta: { title: 'Report', icon: 'report' }
+        meta: { title: '举报', icon: 'report' }
       }
     ]
   },
