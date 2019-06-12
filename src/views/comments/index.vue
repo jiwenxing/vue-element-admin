@@ -1,34 +1,59 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <div>
-        <el-select v-model="listQuery.auditStatus" placeholder="audit status" clearable style="width: 120px" class="filter-item bottom-space">
-          <el-option v-for="item in auditStatusOptions" :key="item.key" :label="item.display_name" :value="item.key" />
-        </el-select>
-        <el-input v-model="listQuery.pin" placeholder="pin" style="width: 150px" class="filter-item bottom-space" @keyup.enter.native="handleFilter" />
-        <el-input v-model="listQuery.sku" placeholder="commodity number" style="width: 150px" class="filter-item bottom-space" @keyup.enter.native="handleFilter" />
-        <el-input v-model="listQuery.orderId" placeholder="order number" style="width: 150px" class="filter-item bottom-space" @keyup.enter.native="handleFilter" />
-        <el-select v-model="listQuery.grade" placeholder="grade" clearable style="width: 120px" class="filter-item bottom-space">
-          <el-option v-for="item in gradeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
-        </el-select>
-        <el-select v-model="listQuery.topStatus" placeholder="top status" clearable style="width: 120px" class="filter-item bottom-space">
-          <el-option v-for="item in topStatusOptions" :key="item.key" :label="item.display_name" :value="item.key" />
-        </el-select>
-        <el-select v-model="listQuery.shareStatus" placeholder="share status" clearable style="width: 130px" class="filter-item bottom-space">
-          <el-option v-for="item in shareStatusOptions" :key="item.key" :label="item.display_name" :value="item.key" />
-        </el-select>
-        <el-input v-model="listQuery.keyword" placeholder="keyword" style="width: 200px" class="filter-item bottom-space" @keyup.enter.native="handleFilter" />
+      <el-form :inline="true" :model="listQuery" class="demo-form-inline" label-width="120px">
+        <el-form-item label="Audit Status">
+          <el-select v-model="listQuery.auditStatus" placeholder="audit status" clearable style="width: 150px" class="filter-item bottom-space">
+            <el-option v-for="item in auditStatusOptions" :key="item.key" :label="item.display_name" :value="item.key" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="User Account">
+          <el-input v-model="listQuery.pin" placeholder="pin" style="width: 150px" class="filter-item bottom-space" @keyup.enter.native="handleFilter" />
+        </el-form-item>
+        <el-form-item label="SKU">
+          <el-input v-model="listQuery.sku" placeholder="commodity number" style="width: 150px" class="filter-item bottom-space" @keyup.enter.native="handleFilter" />
+        </el-form-item>
+        <el-form-item label="Order ID">
+          <el-input v-model="listQuery.orderId" placeholder="order number" style="width: 150px" class="filter-item bottom-space" @keyup.enter.native="handleFilter" />
+        </el-form-item>
+        <br />
+        <el-form-item label="Top Status">
+          <el-select v-model="listQuery.topStatus" placeholder="top status" clearable style="width: 150px" class="filter-item bottom-space">
+            <el-option v-for="item in topStatusOptions" :key="item.key" :label="item.display_name" :value="item.key" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="Share Status">
+          <el-select v-model="listQuery.shareStatus" placeholder="share status" clearable style="width: 150px" class="filter-item bottom-space">
+            <el-option v-for="item in shareStatusOptions" :key="item.key" :label="item.display_name" :value="item.key" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="Grade">
+          <el-select v-model="listQuery.grade" placeholder="grade" clearable style="width: 150px" class="filter-item bottom-space">
+            <el-option v-for="item in gradeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="Nick Name">
+          <el-input v-model="listQuery.orderId" placeholder="nick name" style="width: 150px" class="filter-item bottom-space" @keyup.enter.native="handleFilter" />
+        </el-form-item>
+        <br />
 
-        <category @cate-change="listQuery.category=$event" />
-        <date-time-picker @time-change="listQuery.timeRange=$event" />
-
+        <el-form-item label="Keyword">
+          <el-input v-model="listQuery.keyword" placeholder="keyword" style="width: 435px" class="filter-item bottom-space" @keyup.enter.native="handleFilter" />
+        </el-form-item>
+        <el-form-item label="Category">
+          <category @cate-change="listQuery.category=$event" />
+        </el-form-item>
+        <br />
+        <el-form-item label="Comment Time">
+          <date-time-picker @time-change="listQuery.timeRange=$event" />
+        </el-form-item>
         <el-button v-waves class="filter-item bottom-space" type="primary" icon="el-icon-search" @click="handleFilter">
           Search
         </el-button>
         <el-button v-waves class="filter-item bottom-space" type="danger" icon="el-icon-delete" @click="resetSearch">
           Clear
         </el-button>
-      </div>
+      </el-form>
     </div>
     <el-divider />
 
@@ -49,7 +74,10 @@
             <el-form-item label="Comment ID">
               <span>{{ row.id }}</span>
             </el-form-item>
-            <el-form-item label="Reviewer">
+            <el-form-item label="Top Status">
+              <span>{{ row.topStatus | topStatusShowFilter }}</span>
+            </el-form-item>
+            <el-form-item label="User Nick Name">
               <span>{{ row.reviewer }}</span>
             </el-form-item>
             <el-form-item label="Shop Name">
@@ -92,7 +120,7 @@
           <svg-icon v-for="n in +scope.row.importance" :key="n" icon-class="star" class="meta-item__icon" />
         </template>
       </el-table-column>
-      <el-table-column label="Audit Status" class-name="status-col" min-width="110">
+      <!-- <el-table-column label="Audit Status" class-name="status-col" min-width="110">
         <template slot-scope="{row}">
           <el-tag :type="row.status | statusFilter">
             {{ row.status | statusShowFilter }}
@@ -105,8 +133,17 @@
             <i :class="row.topStatus | topStatusIconFilter" />
             {{ row.topStatus | topStatusShowFilter }}
           </el-tag>
-          <!-- <i :class="row.topStatus | topStatusIconFilter" />
-          {{ row.topStatus | topStatusShowFilter }} -->
+        </template>
+      </el-table-column> -->
+      <el-table-column label="Status" class-name="status-col" width="140" align="center">
+        <template slot-scope="{row}">
+          <el-tag :type="row.status | statusFilter">
+            {{ row.status | statusShowFilter }}
+          </el-tag>
+          <el-tag v-if="row.status==1" :type="row.topStatus | statusFilter" effect="plain">
+            <i :class="row.topStatus | topStatusIconFilter" />
+            <!-- {{ row.topStatus | topStatusShowFilter }} -->
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column label="Comment Time" width="180px" align="center">
@@ -115,7 +152,7 @@
           <span>{{ scope.row.display_time }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Actions" align="center" width="430" class-name="small-padding fixed-width">
+      <el-table-column label="Actions" align="center" width="250" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button v-if="row.status==1" size="mini" type="danger" @click="handleModifyStatus(row, -1)">
             Delete

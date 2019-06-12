@@ -3,10 +3,11 @@
     v-model="value"
     type="datetimerange"
     :picker-options="pickerOptions"
-    range-separator="to"
+    range-separator="-"
     start-placeholder="Begin"
     end-placeholder="End"
     align="right"
+    style="width: 435px"
   />
 </template>
 

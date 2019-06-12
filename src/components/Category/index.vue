@@ -3,7 +3,7 @@
     placeholder="category"
     :props="cate"
     clearable
-    style="width: 200px"
+    style="width: 435px"
     @change="handleChange"
   />
 </template>
