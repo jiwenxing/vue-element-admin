@@ -49,8 +49,8 @@
         </div>
         <div class="demo-block-control" style="left: 0px;" @click="showAll = !showAll">
           <i :class="[showAll ? 'el-icon-caret-top' : 'el-icon-caret-bottom']" />
-          <span v-if="showAll" class="tips">hide search options</span>
-          <span v-else class="tips">show more search options</span>
+          <span v-if="showAll" class="tips">hide extra filter options</span>
+          <span v-else class="tips">show more filter options</span>
         </div>
         <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
           Search
@@ -496,16 +496,6 @@ export default {
           })
         }
       })
-    },
-    handleDelete(row) {
-      this.$notify({
-        title: '成功',
-        message: '删除成功',
-        type: 'success',
-        duration: 2000
-      })
-      const index = this.list.indexOf(row)
-      this.list.splice(index, 1)
     }
   }
 }
@@ -547,7 +537,20 @@ export default {
   line-height: 60px;
   border-radius: 2px;
 }
-.demo-block-control{box-sizing:border-box;background-color:#fff;border-bottom-left-radius:4px;border-bottom-right-radius:4px;text-align:center;margin-top:-1px;color:#d3dce6;cursor:pointer;position:relative}
-.demo-block-control:hover{color:#409eff;background-color:#f9fafc}
+.demo-block-control {
+  box-sizing:border-box;
+  background-color:#fff;
+  border-bottom-left-radius:4px;
+  border-bottom-right-radius:4px;
+  text-align:center;
+  margin-top:-1px;
+  color:#d3dce6;
+  cursor:pointer;
+  position:relative
+}
+.demo-block-control:hover {
+  color:#409eff;
+  background-color:#f9fafc
+}
 
 </style>
