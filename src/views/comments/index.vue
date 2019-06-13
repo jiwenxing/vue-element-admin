@@ -175,30 +175,36 @@
       </el-table-column>
       <el-table-column label="Actions" align="center" width="250" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-button v-if="row.status==1" size="mini" type="danger" @click="handleModifyStatus(row, -1)">
+          <el-button plain v-if="row.status==1" size="mini" type="danger" @click="handleModifyStatus(row, -1)">
             Delete
           </el-button>
-          <el-button v-if="row.status==-1" size="mini" type="success" @click="handleModifyStatus(row, 1)">
+          <el-button plain v-if="row.status==-1" size="mini" type="success" @click="handleModifyStatus(row, 1)">
             Pass
           </el-button>
-          <el-button v-if="row.status==0" size="mini" type="success" @click="handleModifyStatus(row, 1)">
+          <el-button plain v-if="row.status==0" size="mini" type="success" @click="handleModifyStatus(row, 1)">
             Passed
           </el-button>
-          <el-button v-if="row.status==0" size="mini" type="danger" @click="handleModifyStatus(row, -1)">
+          <el-button plain v-if="row.status==0" size="mini" type="danger" @click="handleModifyStatus(row, -1)">
             Delete
           </el-button>
-          <el-button v-if="(row.topStatus==0 || row.topStatus==-1) && row.status==1" size="mini" type="success" @click="handleModifyTopStatus(row, 1)">
+          <el-button plain v-if="(row.topStatus==0 || row.topStatus==-1) && row.status==1" size="mini" type="success" @click="handleModifyTopStatus(row, 1)">
             Top
           </el-button>
-          <el-button v-if="(row.topStatus==0 || row.topStatus==1) && row.status==1" size="mini" type="danger" @click="handleModifyTopStatus(row, -1)">
+          <el-button plain v-if="(row.topStatus==0 || row.topStatus==1) && row.status==1" size="mini" type="danger" @click="handleModifyTopStatus(row, -1)">
             Sink
           </el-button>
-          <el-button v-if="(row.status==1 && row.topStatus!=0) && row.status==1" size="mini" type="info" @click="handleModifyTopStatus(row, 0)">
+          <el-button plain v-if="(row.status==1 && row.topStatus!=0) && row.status==1" size="mini" type="info" @click="handleModifyTopStatus(row, 0)">
             Nomal
           </el-button>
         </template>
       </el-table-column>
     </el-table>
+    <el-footer>
+      <!-- <el-row> -->
+      <el-button size="small" type="primary">Pass Selected</el-button>
+      <el-button size="small" type="danger">Delete Selected</el-button>
+      <!-- </el-row> -->
+    </el-footer>
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" style="padding: 20px 0 5px" @pagination="getList" />
 
@@ -576,6 +582,14 @@ export default {
 }
 .danger-row {
   background-color: #e2d2d5;
+}
+.el-footer {
+  border: solid 2px #ebeef5;
+  border-top: 0px;
+  color: #333;
+  text-align: left;
+  line-height: 60px;
+  border-radius: 2px;
 }
 /* .demo-block-control{box-sizing:border-box;background-color:#fff;border-bottom-left-radius:4px;border-bottom-right-radius:4px;text-align:center;margin-top:-1px;color:#d3dce6;cursor:pointer;position:relative}
 .demo-block-control:hover{color:#409eff;background-color:#f9fafc} */
