@@ -175,25 +175,25 @@
       </el-table-column>
       <el-table-column label="Actions" align="center" width="250" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-button plain v-if="row.status==1" size="mini" type="danger" @click="handleModifyStatus(row, -1)">
+          <el-button v-if="row.status==1" plain size="mini" type="danger" @click="handleModifyStatus(row, -1)">
             Delete
           </el-button>
-          <el-button plain v-if="row.status==-1" size="mini" type="success" @click="handleModifyStatus(row, 1)">
+          <el-button v-if="row.status==-1" plain size="mini" type="success" @click="handleModifyStatus(row, 1)">
             Pass
           </el-button>
-          <el-button plain v-if="row.status==0" size="mini" type="success" @click="handleModifyStatus(row, 1)">
+          <el-button v-if="row.status==0" plain size="mini" type="success" @click="handleModifyStatus(row, 1)">
             Passed
           </el-button>
-          <el-button plain v-if="row.status==0" size="mini" type="danger" @click="handleModifyStatus(row, -1)">
+          <el-button v-if="row.status==0" plain size="mini" type="danger" @click="handleModifyStatus(row, -1)">
             Delete
           </el-button>
-          <el-button plain v-if="(row.topStatus==0 || row.topStatus==-1) && row.status==1" size="mini" type="success" @click="handleModifyTopStatus(row, 1)">
+          <el-button v-if="(row.topStatus==0 || row.topStatus==-1) && row.status==1" plain size="mini" type="success" @click="handleModifyTopStatus(row, 1)">
             Top
           </el-button>
-          <el-button plain v-if="(row.topStatus==0 || row.topStatus==1) && row.status==1" size="mini" type="danger" @click="handleModifyTopStatus(row, -1)">
+          <el-button v-if="(row.topStatus==0 || row.topStatus==1) && row.status==1" plain size="mini" type="danger" @click="handleModifyTopStatus(row, -1)">
             Sink
           </el-button>
-          <el-button plain v-if="(row.status==1 && row.topStatus!=0) && row.status==1" size="mini" type="info" @click="handleModifyTopStatus(row, 0)">
+          <el-button v-if="(row.status==1 && row.topStatus!=0) && row.status==1" plain size="mini" type="info" @click="handleModifyTopStatus(row, 0)">
             Nomal
           </el-button>
         </template>
