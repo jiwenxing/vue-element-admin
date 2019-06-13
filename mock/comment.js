@@ -15,7 +15,7 @@ for (let i = 0; i < count; i++) {
     ip: '@ip',
     reviewer: '@first',
     category: '@first',
-    title: '@title(5, 10)',
+    commodityName: '@title(5, 10)',
     content_short: 'mock data',
     content: '@sentence(3, 27)',
     forecast: '@float(0, 100, 2, 2)',
@@ -101,18 +101,7 @@ export default [
   },
 
   {
-    url: '/comment/passSelected',
-    type: 'post',
-    response: _ => {
-      return {
-        code: 20000,
-        data: 'success'
-      }
-    }
-  },
-
-  {
-    url: '/comment/deleteSelected',
+    url: '/comment/batchAuditSelected',
     type: 'post',
     response: _ => {
       return {

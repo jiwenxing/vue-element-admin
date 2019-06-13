@@ -39,16 +39,9 @@ export function updateContent(data) {
     data
   })
 }
-export function passSelected(data) {
+export function batchAuditSelected(data) {
   return request({
-    url: '/comment/passSelected',
-    method: 'post',
-    data
-  })
-}
-export function deleteSelected(data) {
-  return request({
-    url: '/comment/deleteSelected',
+    url: '/comment/batchAuditSelected',
     method: 'post',
     data
   })

@@ -93,7 +93,7 @@
               <span>{{ row.reviewer }}</span>
             </el-form-item>
             <el-form-item label="Commodity Name:">
-              <span>{{ row.title }}</span>
+              <span>{{ row.commodityName }}</span>
             </el-form-item>
             <el-form-item label="Price:">
               <span>{{ row.forecast }}</span>
@@ -125,7 +125,7 @@
       <el-table-column label="Commodity" min-width="100px">
         <template slot-scope="{row}">
           <el-tooltip placement="top">
-            <div slot="content">{{ row.title }}</div>
+            <div slot="content">{{ row.commodityName }}</div>
             <el-link icon="el-icon-link" :underline="false" type="info" :href="'https://item.jd.com/' + row.sku + '.html'" target="_blank">{{ row.sku }}</el-link>
           </el-tooltip>
         </template>
@@ -180,16 +180,16 @@
       </el-table-column>
       <el-table-column label="Actions" align="center" width="250" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-button v-if="row.status==1" plain size="mini" type="danger" @click="handleModifyStatus(row, -1)">
+          <el-button v-if="row.status==1" plain size="mini" type="danger" @click="handleModifyAuditStatus(row, -1)">
             Delete
           </el-button>
-          <el-button v-if="row.status==-1" plain size="mini" type="success" @click="handleModifyStatus(row, 1)">
+          <el-button v-if="row.status==-1" plain size="mini" type="success" @click="handleModifyAuditStatus(row, 1)">
             Pass
           </el-button>
-          <el-button v-if="row.status==0" plain size="mini" type="success" @click="handleModifyStatus(row, 1)">
+          <el-button v-if="row.status==0" plain size="mini" type="success" @click="handleModifyAuditStatus(row, 1)">
             Passed
           </el-button>
-          <el-button v-if="row.status==0" plain size="mini" type="danger" @click="handleModifyStatus(row, -1)">
+          <el-button v-if="row.status==0" plain size="mini" type="danger" @click="handleModifyAuditStatus(row, -1)">
             Delete
           </el-button>
           <el-button v-if="(row.topStatus==0 || row.topStatus==-1) && row.status==1" plain size="mini" type="success" @click="handleModifyTopStatus(row, 1)">
@@ -205,8 +205,8 @@
       </el-table-column>
     </el-table>
     <el-footer>
-      <el-button size="small" type="primary" @click="passSelected">Pass Selected</el-button>
-      <el-button size="small" type="danger" @click="deleteSelected">Delete Selected</el-button>
+      <el-button size="small" type="primary" @click="batchAuditSelected(1)">Pass Selected</el-button>
+      <el-button size="small" type="danger" @click="batchAuditSelected(-1)">Delete Selected</el-button>
     </el-footer>
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" style="padding: 20px 0 5px" @pagination="getList" />
@@ -240,33 +240,28 @@
         <el-button @click="dialogFormVisible = false">
           cancel
         </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
+        <el-button type="primary" @click="updateData">
           confirm
         </el-button>
       </div>
     </el-dialog>
 
-    <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
-      <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
-        <el-table-column prop="key" label="Channel" />
-        <el-table-column prop="pv" label="Pv" />
-      </el-table>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogPvVisible = false">confirm</el-button>
-      </span>
-    </el-dialog>
+    <!-- back to top -->
+    <el-tooltip placement="top" content="Back to Top">
+      <back-to-top :custom-style="myBackToTopStyle" :visibility-height="400" :back-position="50" transition-name="fade" />
+    </el-tooltip>
   </div>
 </template>
 
 <script>
-import { fetchPv, createArticle } from '@/api/article'
-import { fetchList, updateContent, passSelected, deleteSelected } from '@/api/comment'
+import { fetchList, updateContent, batchAuditSelected } from '@/api/comment'
 import waves from '@/directive/waves' // waves directive
 import { getToken } from '@/utils/auth' // get token from cookie
 // import { parseTime } from '@/utils/index'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import Category from '@/components/Category'
 import DateTimePicker from '@/components/DateTimePicker'
+import BackToTop from '@/components/BackToTop'
 
 const auditStatusOptions = [
   { key: 1, display_name: 'Passed' },
@@ -289,8 +284,8 @@ const shareStatusOptions = [
 ]
 
 export default {
-  name: 'ComplexTable',
-  components: { Pagination, Category, DateTimePicker },
+  name: 'CommentTable',
+  components: { Pagination, Category, DateTimePicker, BackToTop },
   directives: { waves },
   filters: {
     statusFilter(status) {
@@ -329,7 +324,11 @@ export default {
   data() {
     return {
       showAll: false,
-      multipleSelection: [],
+      multipleSelection: {
+        ids: [],
+        status: undefined,
+        token: ''
+      },
       tableKey: 0,
       list: null,
       total: 0,
@@ -337,10 +336,7 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
-        auditStatus: 0,
-        title: undefined,
-        type: undefined,
-        sort: '+id'
+        auditStatus: 0
       },
       scoreOptions: [1, 2, 3],
       auditStatusOptions,
@@ -348,15 +344,19 @@ export default {
       topStatusOptions,
       shareStatusOptions,
       statusOptions: ['passed', 'auditing', 'deleted'],
-      showReviewer: false,
       temp: {
         id: undefined,
         score: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        type: '',
-        status: 'published'
+        timestamp: new Date()
+      },
+      myBackToTopStyle: {
+        right: '50px',
+        bottom: '50px',
+        width: '40px',
+        height: '40px',
+        'border-radius': '4px',
+        'line-height': '45px', // 请保持与高度一致以垂直居中 Please keep consistent with height to center vertically
+        background: '#e7eaf1'// 按钮的背景颜色 The background color of the button
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -364,14 +364,11 @@ export default {
         update: 'Edit',
         create: 'Create'
       },
-      dialogPvVisible: false,
-      pvData: [],
       rules: {
-        type: [{ required: true, message: 'type is required', trigger: 'change' }],
-        timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
+        // type: [{ required: true, message: 'type is required', trigger: 'change' }],
+        // timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
         content: [{ required: true, message: 'content is required', trigger: 'blur' }]
-      },
-      downloadLoading: false
+      }
     }
   },
   created() {
@@ -417,23 +414,7 @@ export default {
       }
       return ''
     },
-    cancelEdit(row) {
-      row.content = row.originalContent
-      row.edit = false
-      this.$message({
-        message: 'The title has been restored to the original value',
-        type: 'warning'
-      })
-    },
-    confirmEdit(row) {
-      row.edit = false
-      row.originalContent = row.content
-      this.$message({
-        message: 'The title has been edited',
-        type: 'success'
-      })
-    },
-    handleModifyStatus(row, status) {
+    handleModifyAuditStatus(row, status) {
       this.$message({
         message: '操作成功',
         type: 'success'
@@ -448,10 +429,10 @@ export default {
       row.topStatus = status
     },
     handleSelectionChange(val) {
-      this.multipleSelection = Array.from(val, x => x.id)
+      this.multipleSelection.ids = Array.from(val, x => x.id)
     },
-    passSelected() {
-      if (this.multipleSelection.length === 0) {
+    batchAuditSelected(status) {
+      if (this.multipleSelection.ids.length === 0) {
         this.$message({
           message: 'nothing selected',
           type: 'warning'
@@ -459,14 +440,16 @@ export default {
         return
       }
       this.listLoading = true
-      const selectedIds = this.multipleSelection
-      passSelected(this.multipleSelection).then(() => {
+      const selectedIds = this.multipleSelection.ids
+      this.multipleSelection.status = status
+      this.multipleSelection.token = getToken()
+      batchAuditSelected(this.multipleSelection).then(() => {
         this.list.forEach(function(item, index, arr) {
           const hit = selectedIds.findIndex(function(value, index, arr) {
             return value === item.id
           }) > -1
           if (hit) {
-            item.status = 1
+            item.status = status
           }
         })
       })
@@ -478,70 +461,7 @@ export default {
           type: 'success',
           duration: 2000
         })
-      }, 2 * 1000)
-    },
-    deleteSelected() {
-      if (this.multipleSelection.length === 0) {
-        this.$message({
-          message: 'nothing selected',
-          type: 'warning'
-        })
-        return
-      }
-      const selectedIds = this.multipleSelection
-      deleteSelected(this.multipleSelection).then(() => {
-        this.list.forEach(function(item, index, arr) {
-          const hit = selectedIds.findIndex(function(value, index, arr) {
-            return value === item.id
-          }) > -1
-          if (hit) {
-            item.status = -1
-          }
-        })
-        this.$notify({
-          title: 'Success',
-          message: 'All Selected Comments Deleted',
-          type: 'success',
-          duration: 2000
-        })
-      })
-    },
-    resetTemp() {
-      this.temp = {
-        id: undefined,
-        score: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        status: 'published',
-        type: ''
-      }
-    },
-    handleCreate() {
-      this.resetTemp()
-      this.dialogStatus = 'create'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    createData() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
-          this.temp.author = 'vue-element-admin'
-          createArticle(this.temp).then(() => {
-            this.list.unshift(this.temp)
-            this.dialogFormVisible = false
-            this.$notify({
-              title: '成功',
-              message: '创建成功',
-              type: 'success',
-              duration: 2000
-            })
-          })
-        }
-      })
+      }, 1 * 1000)
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
@@ -586,12 +506,6 @@ export default {
       })
       const index = this.list.indexOf(row)
       this.list.splice(index, 1)
-    },
-    handleFetchPv(pv) {
-      fetchPv(pv).then(response => {
-        this.pvData = response.data.pvData
-        this.dialogPvVisible = true
-      })
     }
   }
 }
