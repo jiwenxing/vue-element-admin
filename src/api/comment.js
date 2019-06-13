@@ -39,3 +39,17 @@ export function updateContent(data) {
     data
   })
 }
+export function passSelected(data) {
+  return request({
+    url: '/comment/passSelected',
+    method: 'post',
+    data
+  })
+}
+export function deleteSelected(data) {
+  return request({
+    url: '/comment/deleteSelected',
+    method: 'post',
+    data
+  })
+}

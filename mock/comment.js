@@ -101,7 +101,18 @@ export default [
   },
 
   {
-    url: '/article/create',
+    url: '/comment/passSelected',
+    type: 'post',
+    response: _ => {
+      return {
+        code: 20000,
+        data: 'success'
+      }
+    }
+  },
+
+  {
+    url: '/comment/deleteSelected',
     type: 'post',
     response: _ => {
       return {

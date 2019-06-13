@@ -205,10 +205,8 @@
       </el-table-column>
     </el-table>
     <el-footer>
-      <!-- <el-row> -->
-      <el-button size="small" type="primary">Pass Selected</el-button>
-      <el-button size="small" type="danger">Delete Selected</el-button>
-      <!-- </el-row> -->
+      <el-button size="small" type="primary" @click="passSelected">Pass Selected</el-button>
+      <el-button size="small" type="danger" @click="deleteSelected">Delete Selected</el-button>
     </el-footer>
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" style="padding: 20px 0 5px" @pagination="getList" />
@@ -223,7 +221,7 @@
         <el-form-item label="End Time" prop="timestamp">
           <el-date-picker v-model="temp.timestamp" type="datetime" placeholder="Please pick a date" />
         </el-form-item> -->
-        <el-form-item label="Content" label-width="90px" prop="content" :rules="[{ required: true, message: 'Content cannot be empty!'}]">
+        <el-form-item label="Content" label-width="90px" prop="content">
           <el-input v-model="temp.content" type="textarea" :rows="3" />
         </el-form-item>
         <!-- <el-form-item :label="$t('table.status')">
@@ -262,7 +260,7 @@
 
 <script>
 import { fetchPv, createArticle } from '@/api/article'
-import { fetchList, updateContent } from '@/api/comment'
+import { fetchList, updateContent, passSelected, deleteSelected } from '@/api/comment'
 import waves from '@/directive/waves' // waves directive
 import { getToken } from '@/utils/auth' // get token from cookie
 // import { parseTime } from '@/utils/index'
@@ -371,7 +369,7 @@ export default {
       rules: {
         type: [{ required: true, message: 'type is required', trigger: 'change' }],
         timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
-        title: [{ required: true, message: 'content is required', trigger: 'blur' }]
+        content: [{ required: true, message: 'content is required', trigger: 'blur' }]
       },
       downloadLoading: false
     }
@@ -449,22 +447,64 @@ export default {
       })
       row.topStatus = status
     },
-    sortChange(data) {
-      const { prop, order } = data
-      if (prop === 'id') {
-        this.sortByID(order)
-      }
-    },
     handleSelectionChange(val) {
-      this.multipleSelection = val
+      this.multipleSelection = Array.from(val, x => x.id)
     },
-    sortByID(order) {
-      if (order === 'ascending') {
-        this.listQuery.sort = '+id'
-      } else {
-        this.listQuery.sort = '-id'
+    passSelected() {
+      if (this.multipleSelection.length === 0) {
+        this.$message({
+          message: 'nothing selected',
+          type: 'warning'
+        })
+        return
       }
-      this.handleFilter()
+      this.listLoading = true
+      const selectedIds = this.multipleSelection
+      passSelected(this.multipleSelection).then(() => {
+        this.list.forEach(function(item, index, arr) {
+          const hit = selectedIds.findIndex(function(value, index, arr) {
+            return value === item.id
+          }) > -1
+          if (hit) {
+            item.status = 1
+          }
+        })
+      })
+      setTimeout(() => {
+        this.listLoading = false
+        this.$notify({
+          title: 'Success',
+          message: 'All Selected Comments Audited',
+          type: 'success',
+          duration: 2000
+        })
+      }, 2 * 1000)
+    },
+    deleteSelected() {
+      if (this.multipleSelection.length === 0) {
+        this.$message({
+          message: 'nothing selected',
+          type: 'warning'
+        })
+        return
+      }
+      const selectedIds = this.multipleSelection
+      deleteSelected(this.multipleSelection).then(() => {
+        this.list.forEach(function(item, index, arr) {
+          const hit = selectedIds.findIndex(function(value, index, arr) {
+            return value === item.id
+          }) > -1
+          if (hit) {
+            item.status = -1
+          }
+        })
+        this.$notify({
+          title: 'Success',
+          message: 'All Selected Comments Deleted',
+          type: 'success',
+          duration: 2000
+        })
+      })
     },
     resetTemp() {
       this.temp = {
