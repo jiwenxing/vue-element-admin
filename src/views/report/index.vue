@@ -46,6 +46,7 @@
       :key="tableKey"
       v-loading="listLoading"
       :data="list"
+      :row-class-name="tableRowClassName"
       border
       fit
       highlight-current-row
@@ -93,8 +94,8 @@
         </template>
       </el-table-column>
       <el-table-column label="举报次数" min-width="100px" align="center">
-        <template slot-scope="scope">
-          <el-button type="text" @click="openReportInfoList(row)">{{scope.row.importance}}</el-button>
+        <template slot-scope="{row}">
+          <el-button type="text" @click="openReportInfoList(row)">{{row.score}}</el-button>
         </template>
       </el-table-column>
       <el-table-column label="评价内容" min-width="200px">
@@ -105,7 +106,7 @@
       </el-table-column>
       <el-table-column label="评分" width="95px">
         <template slot-scope="scope">
-          <svg-icon v-for="n in +scope.row.importance" :key="n" icon-class="star" class="meta-item__icon"/>
+          <svg-icon v-for="n in +scope.row.score" :key="n" icon-class="star" class="meta-item__icon"/>
         </template>
       </el-table-column>
       <el-table-column label="Audit Status" class-name="status-col" min-width="110">
@@ -131,7 +132,7 @@
           <span>{{scope.row.display_time}}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Actions" align="center" width="430" class-name="small-padding fixed-width">
+      <el-table-column label="Actions" align="center" width="250" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button v-if="row.status==1" size="mini" type="danger" @click="handleModifyStatus(row, -1)">
             Delete
@@ -153,11 +154,15 @@
                      @click="handleModifyTopStatus(row, -1)">
             Sink
           </el-button>
+          <el-button v-if="(row.status==1 && row.topStatus!=0) && row.status==1" size="mini" type="info" @click="handleModifyTopStatus(row, 0)">
+            Nomal
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
 
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" style="padding: 20px 0 5px" @pagination="getList"/>
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit"
+                style="padding: 20px 0 5px" @pagination="getList"/>
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px"
@@ -186,12 +191,11 @@
         <el-button type="primary" @click="dialogPvVisible = false">confirm</el-button>
       </span>
     </el-dialog>
-<!--===================================================================================================-->
-    <el-dialog title="提示" :visible.sync="testDialog" width="30%" :before-close="handleClose">
+    <!--===================================================================================================-->
+    <el-dialog title="举报详情列表" :visible.sync="testDialog" width="30%"> <!--:before-close="handleClose">-->
 
 
-      <el-table :key="tableKey" v-loading="listLoading" :data="reportInfoList" border fit
-                highlight-current-row style="width: 100%;">
+      <el-table :key="tableKey" v-loading="listLoading" :data="reportInfoList" border fit highlight-current-row style="width: 100%;">
         <el-table-column type="expand">
           <template slot-scope="{row}">
             <el-form label-position="left" inline class="demo-table-expand">
@@ -222,19 +226,20 @@
         </el-table-column>
         <el-table-column label="商品名称" min-width="200px">
           <template slot-scope="{row}">
-            <el-link icon="el-icon-link" :underline="false" type="info" :href="'https://item.jd.com/' + row.sku + '.html'"
+            <el-link icon="el-icon-link" :underline="false" type="info"
+                     :href="'https://item.jd.com/' + row.sku + '.html'"
                      target="_blank">{{row.title}}
             </el-link>
           </template>
         </el-table-column>
         <el-table-column label="评价人" min-width="100px" align="center">
           <template slot-scope="{row}">
-            <span ref="reportInfoList" @click="testDialog = true">{{row.pin}}</span>
+            <span ref="reportInfoList">{{row.pin}}</span>
           </template>
         </el-table-column>
         <el-table-column label="举报次数" min-width="100px" align="center">
           <template slot-scope="scope">
-            <el-button type="text">{{scope.row.importance}}</el-button>
+            <el-button type="text">{{scope.row.score}}</el-button>
           </template>
         </el-table-column>
         <el-table-column label="评价内容" min-width="200px">
@@ -245,7 +250,7 @@
         </el-table-column>
         <el-table-column label="评分" width="95px">
           <template slot-scope="scope">
-            <svg-icon v-for="n in +scope.row.importance" :key="n" icon-class="star" class="meta-item__icon"/>
+            <svg-icon v-for="n in +scope.row.score" :key="n" icon-class="star" class="meta-item__icon"/>
           </template>
         </el-table-column>
         <el-table-column label="Audit Status" class-name="status-col" min-width="110">
@@ -296,11 +301,6 @@
           </template>
         </el-table-column>
       </el-table>
-
-
-
-
-
 
 
     </el-dialog>
@@ -381,6 +381,7 @@
         multipleSelection: [],
         tableKey: 0,
         list: null,
+        reportInfoList: [],
         total: 0,
         listLoading: true,
         listQuery: {
@@ -391,7 +392,7 @@
           type: undefined,
           sort: '+id'
         },
-        importanceOptions: [1, 2, 3],
+        scoreOptions: [1, 2, 3],
         auditStatusOptions,
         gradeOptions,
         topStatusOptions,
@@ -400,7 +401,7 @@
         showReviewer: false,
         temp: {
           id: undefined,
-          importance: 1,
+          score: 1,
           remark: '',
           timestamp: new Date(),
           title: '',
@@ -459,6 +460,14 @@
         this.listQuery.keyword = ''
         this.getList()
       },
+    tableRowClassName({ row, rowIndex }) {
+      if (row.score === 1) {
+        return 'danger-row'
+      } else if (row.score < 4) {
+        return 'warning-row'
+      }
+      return ''
+    },
       cancelEdit(row) {
         row.content = row.originalContent
         row.edit = false
@@ -509,7 +518,7 @@
       resetTemp() {
         this.temp = {
           id: undefined,
-          importance: 1,
+          score: 1,
           remark: '',
           timestamp: new Date(),
           title: '',
@@ -594,7 +603,8 @@
         })
       },
       openReportInfoList(data) {
-        console.log(JSON.stringify(data));
+        console.log(1111);
+        this.reportInfoList = data.reportInfoList;
       }
     }
   }
@@ -629,6 +639,12 @@
     display: block;
   }
 
+.warning-row {
+  background-color: #fff1de;
+}
+.danger-row {
+  background-color: #e2d2d5;
+}
   /* .demo-block-control{box-sizing:border-box;background-color:#fff;border-bottom-left-radius:4px;border-bottom-right-radius:4px;text-align:center;margin-top:-1px;color:#d3dce6;cursor:pointer;position:relative}
   .demo-block-control:hover{color:#409eff;background-color:#f9fafc} */
 
