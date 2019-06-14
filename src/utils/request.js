@@ -2,12 +2,17 @@ import axios from 'axios'
 import { MessageBox, Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
+import qs from 'qs'
 
 // create an axios instance
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
-  timeout: 5000 // request timeout
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  timeout: 5000, // request timeout
+  transformRequest: [function(data) {
+    return qs.stringify(data)
+  }]
 })
 
 // request interceptor
@@ -46,9 +51,10 @@ service.interceptors.response.use(
     const res = response.data
 
     // if the custom code is not 20000, it is judged as an error.
-    if (res.code !== 20000) {
+    console.log('res.code = ' + res.code)
+    if (res.code !== '1') {
       Message({
-        message: res.message || 'Error',
+        message: res.msg || 'Error',
         type: 'error',
         duration: 5 * 1000
       })
