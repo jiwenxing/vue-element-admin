@@ -22,7 +22,7 @@
           <span class="el-input-group__append formLabel">举报时间</span>
           <date-time-picker @time-change="param.timeRange=$event"/>
         </el-form-item>
-
+        <br />
         <el-button v-waves class="filter-item bottom-space" type="primary" icon="el-icon-search" @click="handleFilter">
           查询
         </el-button>
@@ -226,14 +226,32 @@ export default {
   methods: {
     getReasonList() {
       queryReasonList().then(response => {
-        this.reasonMap = response.reasonMap
+        if(response.code == 0) {
+          this.reasonMap = response.reasonMap
+        } else {
+          this.$notify({
+            title: '错误',
+            message: '查询出错，错误码：' + response.code,
+            type: 'error',
+            duration: 2000
+          })
+        }
       })
     },
     getList() {
       this.listLoading = true
       queryReportList(this.param).then(response => {
-        this.list = response.reportCommentList
-        this.totalCount = response.totalCount
+        if(response.code == 0) {
+          this.list = response.reportCommentList
+          this.totalCount = response.totalCount
+        } else {
+          this.$notify({
+            title: '错误',
+            message: '查询出错，错误码：' + response.code,
+            type: 'error',
+            duration: 2000
+          })
+        }
         setTimeout(() => {
           this.listLoading = false
         }, 1.5 * 1000)
