@@ -221,8 +221,8 @@
         <el-form-item label="End Time" prop="timestamp">
           <el-date-picker v-model="temp.timestamp" type="datetime" placeholder="Please pick a date" />
         </el-form-item> -->
-        <el-form-item label="Content" label-width="90px" prop="content">
-          <el-input v-model="temp.content" type="textarea" :rows="3" />
+        <el-form-item label="Content" label-width="80px" prop="content">
+          <el-input v-model="temp.content" type="textarea" maxlength="500" show-word-limit :rows="5" style="width:500px;" />
         </el-form-item>
         <!-- <el-form-item :label="$t('table.status')">
           <el-select v-model="temp.status" class="filter-item" placeholder="Please select">
@@ -443,17 +443,17 @@ export default {
       const selectedIds = this.multipleSelection.ids
       this.multipleSelection.status = status
       this.multipleSelection.token = getToken()
-      batchAuditSelected(this.multipleSelection).then(() => {
-        this.list.forEach(function(item, index, arr) {
-          const hit = selectedIds.findIndex(function(value, index, arr) {
-            return value === item.id
-          }) > -1
-          if (hit) {
-            item.status = status
-          }
-        })
-      })
       setTimeout(() => {
+        batchAuditSelected(this.multipleSelection).then(() => {
+          this.list.forEach(function(item, index, arr) {
+            const hit = selectedIds.findIndex(function(value, index, arr) {
+              return value === item.id
+            }) > -1
+            if (hit) {
+              item.status = status
+            }
+          })
+        })
         this.listLoading = false
         this.$notify({
           title: 'Success',
