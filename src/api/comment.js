@@ -39,3 +39,10 @@ export function updateContent(data) {
     data
   })
 }
+export function batchAuditSelected(data) {
+  return request({
+    url: '/comment/batchAuditSelected',
+    method: 'post',
+    data
+  })
+}
