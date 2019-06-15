@@ -62,36 +62,37 @@
         <el-col :span="22">
           <el-row>
             <el-col :span="5">
-              <div class="grid-content bg-purple">
+              <div class="grid-content">
                 <span>审核状态：</span>
                 <el-tag v-for="item in items" :key="item.label" :type="item.type" effect="dark">{{ item.label }}</el-tag>
               </div>
             </el-col>
-            <el-col :span="5"><div class="grid-content bg-purple"><span>用户账号：</span>1234567890</div></el-col>
-            <el-col :span="5"><div class="grid-content bg-purple"><span>用户昵称：</span>1223213213</div></el-col>
-            <el-col :span="5"><div class="grid-content bg-purple"><span>评价时间：</span>2019-06-06 13:12:12</div></el-col>
-            <el-col :span="4"><div class="grid-content bg-purple"><span>IP地址：</span>12.120.102.102</div></el-col>
+            <el-col :span="5"><div class="grid-content"><span>用户账号：</span>1234567890</div></el-col>
+            <el-col :span="5"><div class="grid-content"><span>用户昵称：</span>1223213213</div></el-col>
+            <el-col :span="5"><div class="grid-content"><span>评价时间：</span>2019-06-06 13:12:12</div></el-col>
+            <el-col :span="4"><div class="grid-content"><span>IP地址：</span>12.120.102.102</div></el-col>
           </el-row>
           <el-row>
-            <el-col :span="5"><div class="grid-content bg-purple"><span>订单号：</span>1234567890</div></el-col>
+            <el-col :span="5"><span>订单号：</span>1234567890</el-col>
             <el-col :span="5">
-              <div class="grid-content bg-purple">
-                <span>评分：</span>
-                <el-rate v-model="score" disabled show-score text-color="#ff9900"></el-rate>
-              </div>
+                <el-row>
+                  <el-col :span="5"><span>评分：</span></el-col>
+                  <el-col :span="19">
+                      <el-rate v-model="score" disabled show-score text-color="#ff9900"></el-rate>
+                  </el-col>
+                </el-row>
             </el-col>
-            <el-col :span="5"><div class="grid-content bg-purple"><span>商品号：</span>1234567890</div></el-col>
-            <el-col :span="9"><div class="grid-content bg-purple">
+            <el-col :span="5"><span>商品号：</span>1234567890</el-col>
+            <el-col :span="9">
               <span>商品名称：</span><el-link type="primary" href='http://item.jd.com/18164614013.html' target="_blank">电子琴儿童音乐玩具</el-link>
-            </div></el-col>
+            </el-col>
           </el-row>
           <el-row>
-            <div class="grid-content bg-purple-dark"><span>原文评价：</span>1234567890</div>
+            <div class="grid-content"><span>原文评价：</span>1234567890</div>
           </el-row>
           <el-row>
-            <div class="grid-content bg-purple-dark">
               <span>展示评价：</span>1234**7890
-              <el-button type="text" @click="changeCommentDialogVisible = true">修改</el-button>
+              <el-button type="text" size="medium" round @click="changeCommentDialogVisible = true">修改</el-button>
               <el-dialog title="修改评价展示内容" :visible.sync="changeCommentDialogVisible">
                 <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="textarea"></el-input>
                 <div slot="footer" class="dialog-footer">
@@ -100,28 +101,26 @@
                 </div>
               </el-dialog>
               <el-link type="primary" href='http://item.jd.com/18164614013.html' target="_blank">查看回复</el-link>
-            </div>
           </el-row>
-          <!-- <el-row> -->
-            <el-row >
-              <el-col :span="2" v-for ="item in urls" :key="item">
-                <img :src="item" style="width: 100px; height: 100px" title="点击放大" @click="bigImgDialog = true">
-                <i class="el-icon-error" title="点击删除" style="position: relative; bottom:98px; right:10px; width: 10px; height: 10px; color:red" @click="imgDelete()"></i>
-              </el-col>
-              <el-dialog title="图片放大效果图" :visible.sync="bigImgDialog">
-                <template>
-                  <el-carousel :interval="5000" :arrow="always" :autoplay="false" :initial-index="2"  type="card">
-                    <el-carousel-item v-for="item in urls" :key="item">
-                      <img title="点击删除" :src="item" class="carousel_image_type"/>
-                    </el-carousel-item>
-                  </el-carousel>
-                </template>
-                <span slot="footer" class="dialog-footer">
-                  <el-button @click="bigImgDialog = false">取 消</el-button>
-                  <el-button type="primary" @click="bigImgDialog = false">确 定</el-button>
-                </span>
-              </el-dialog>
-            </el-row>
+          <!-- <el-row >
+            <el-col :span="2" v-for ="item in urls" :key="item">
+              <img :src="item" style="width: 100px; height: 100px" title="点击放大" @click="bigImgDialog = true">
+              <i class="el-icon-error" title="点击删除" style="position: relative; bottom:98px; right:10px; width: 10px; height: 10px; color:red" @click="imgDelete()"></i>
+            </el-col>
+            <el-dialog title="图片放大效果图" :visible.sync="bigImgDialog">
+              <template>
+                <el-carousel :interval="5000" :arrow="always" :autoplay="false" :initial-index="2"  type="card">
+                  <el-carousel-item v-for="item in urls" :key="item">
+                    <img title="点击删除" :src="item" class="carousel_image_type"/>
+                  </el-carousel-item>
+                </el-carousel>
+              </template>
+              <span slot="footer" class="dialog-footer">
+                <el-button @click="bigImgDialog = false">取 消</el-button>
+                <el-button type="primary" @click="bigImgDialog = false">确 定</el-button>
+              </span>
+            </el-dialog>
+          </el-row> -->
 
             <el-row >
               <el-col :span="2" v-for ="item in urls" :key="item">
@@ -134,8 +133,6 @@
                 <i class="el-icon-error" title="点击删除" style="position: relative; bottom:98px; right:10px; width: 10px; height: 10px; color:red" @click="imgDelete()"></i>
               </el-col>
             </el-row>
-
-          <!-- </el-row> -->
         </el-col>
         <el-col :span="2">
           <template>
@@ -152,195 +149,28 @@
         </el-col>
       </el-row>
     </div>
+
+
+    
+    
     <pagination v-show="total>=10" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" style="padding: 20px 0 5px" @pagination="getList" />
-    <el-table
-      :key="tableKey"
-      v-loading="listLoading"
-      :data="list"
-      :row-class-name="tableRowClassName"
-      border
-      fit
-      highlight-current-row
-      style="width: 100%;"
-      @selection-change="handleSelectionChange"
-    >
-      <el-table-column type="expand">
-        <template slot-scope="{row}">
-          <el-form label-position="left" inline class="demo-table-expand">
-            <el-form-item label="Comment ID:">
-              <span>{{ row.id }}</span>
-            </el-form-item>
-            <el-form-item label="Guid:">
-              <span>{{ row.guid }}</span>
-            </el-form-item>
-            <el-form-item label="Order ID:">
-              <span>{{ row.orderId }}</span>
-            </el-form-item>
-            <el-form-item label="Top Status:">
-              <span>{{ row.topStatus | topStatusShowFilter }}</span>
-            </el-form-item>
-            <el-form-item label="User Nick Name:">
-              <span>{{ row.reviewer }}</span>
-            </el-form-item>
-            <el-form-item label="Commodity Name:">
-              <span>{{ row.title }}</span>
-            </el-form-item>
-            <el-form-item label="Price:">
-              <span>{{ row.forecast }}</span>
-            </el-form-item>
-            <el-form-item label="Category:">
-              <span>{{ row.category }}</span>
-            </el-form-item>
-            <el-form-item label="IP:">
-              <span>{{ row.ip }}</span>
-            </el-form-item>
-            <el-form-item label="Client Type:">
-              <span>{{ row.clientType }}</span>
-            </el-form-item>
-          </el-form>
-        </template>
-      </el-table-column>
-      <el-table-column type="selection" align="center" />
-      <!-- <el-table-column label="Sku" align="center" min-width="100">
-        <template slot-scope="{row}">
-          <span v-if="row.sku">{{ row.sku }}</span>
-          <span v-else>0</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Commodity Name" min-width="200px" :show-overflow-tooltip="true">
-        <template slot-scope="{row}">
-          <el-link icon="el-icon-link" :underline="false" type="info" :href="'https://item.jd.com/' + row.sku + '.html'" target="_blank">{{ row.title }}</el-link>
-        </template>
-      </el-table-column> -->
-      <el-table-column label="Commodity" min-width="100px">
-        <template slot-scope="{row}">
-          <el-tooltip placement="top">
-            <div slot="content">{{ row.title }}</div>
-            <el-link icon="el-icon-link" :underline="false" type="info" :href="'https://item.jd.com/' + row.sku + '.html'" target="_blank">{{ row.sku }}</el-link>
-          </el-tooltip>
-        </template>
-      </el-table-column>
-      <el-table-column label="Pin" min-width="100px" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.pin }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Content" min-width="300px">
-        <template slot-scope="{row}">
-          <span>{{ row.content }}</span>
-          <el-button size="mini" icon="el-icon-edit" @click="handleUpdate(row)" />
-        </template>
-      </el-table-column>
-      <el-table-column label="Score" width="95px">
-        <template slot-scope="scope">
-          <svg-icon v-for="n in +scope.row.score" :key="n" icon-class="star" class="meta-item__icon" />
-        </template>
-      </el-table-column>
-      <!-- <el-table-column label="Audit Status" class-name="status-col" min-width="110">
-        <template slot-scope="{row}">
-          <el-tag :type="row.status | statusFilter">
-            {{ row.status | statusShowFilter }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="Top Status" class-name="status-col" width="110">
-        <template slot-scope="{row}">
-          <el-tag :type="row.topStatus | statusFilter" effect="plain">
-            <i :class="row.topStatus | topStatusIconFilter" />
-            {{ row.topStatus | topStatusShowFilter }}
-          </el-tag>
-        </template>
-      </el-table-column> -->
-      <el-table-column label="Status" class-name="status-col" width="140" align="center">
-        <template slot-scope="{row}">
-          <el-tag :type="row.status | statusFilter">
-            {{ row.status | statusShowFilter }}
-          </el-tag>
-          <el-tag v-if="row.status==1 && row.topStatus!=0" :type="row.topStatus | statusFilter" effect="plain">
-            <i :class="row.topStatus | topStatusIconFilter" />
-            <!-- {{ row.topStatus | topStatusShowFilter }} -->
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="Comment Time" width="180px" align="center">
-        <template slot-scope="scope">
-          <i class="el-icon-time" />
-          <span>{{ scope.row.display_time }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Actions" align="center" width="250" class-name="small-padding fixed-width">
-        <template slot-scope="{row}">
-          <el-button v-if="row.status==1" size="mini" type="danger" @click="handleModifyStatus(row, -1)">
-            Delete
-          </el-button>
-          <el-button v-if="row.status==-1" size="mini" type="success" @click="handleModifyStatus(row, 1)">
-            Pass
-          </el-button>
-          <el-button v-if="row.status==0" size="mini" type="success" @click="handleModifyStatus(row, 1)">
-            Passed
-          </el-button>
-          <el-button v-if="row.status==0" size="mini" type="danger" @click="handleModifyStatus(row, -1)">
-            Delete
-          </el-button>
-          <el-button v-if="(row.topStatus==0 || row.topStatus==-1) && row.status==1" size="mini" type="success" @click="handleModifyTopStatus(row, 1)">
-            Top
-          </el-button>
-          <el-button v-if="(row.topStatus==0 || row.topStatus==1) && row.status==1" size="mini" type="danger" @click="handleModifyTopStatus(row, -1)">
-            Sink
-          </el-button>
-          <el-button v-if="(row.status==1 && row.topStatus!=0) && row.status==1" size="mini" type="info" @click="handleModifyTopStatus(row, 0)">
-            Nomal
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+    
+    <el-form ref="form" :model="items" label-width="80px">
+      
+      <div v-for ="item in items" :key="item">
+        <el-form-item label="活动名称">
+          {{item.type}}
+           <el-input v-model="item.type" ></el-input>
+        </el-form-item>
+      </div>
+
+      <el-form-item>
+        <el-button type="primary" @click="submitForm(items)">提交</el-button>
+        <el-button @click="resetForm(items)">重置</el-button>
+      </el-form-item>
+    </el-form>
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" style="padding: 20px 0 5px" @pagination="getList" />
-
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 500px; margin-left:50px;">
-        <!-- <el-form-item label="Begin Time" prop="type">
-          <el-select v-model="temp.type" class="filter-item bottom-space" placeholder="Please select">
-            <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="End Time" prop="timestamp">
-          <el-date-picker v-model="temp.timestamp" type="datetime" placeholder="Please pick a date" />
-        </el-form-item> -->
-        <el-form-item label="Content" label-width="90px" prop="content" :rules="[{ required: true, message: 'Content cannot be empty!'}]">
-          <el-input v-model="temp.content" type="textarea" :rows="3" />
-        </el-form-item>
-        <!-- <el-form-item :label="$t('table.status')">
-          <el-select v-model="temp.status" class="filter-item bottom-space" placeholder="Please select">
-            <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="$t('table.importance')">
-          <el-rate v-model="temp.importance" :colors="['#99A9BF', '#F7BA2A', '#FF9900']" :max="3" style="margin-top:8px;" />
-        </el-form-item> -->
-        <!-- <el-form-item :label="$t('table.remark')">
-          <el-input v-model="temp.remark" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="Please input" />
-        </el-form-item> -->
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">
-          cancel
-        </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
-          confirm
-        </el-button>
-      </div>
-    </el-dialog>
-
-    <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
-      <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
-        <el-table-column prop="key" label="Channel" />
-        <el-table-column prop="pv" label="Pv" />
-      </el-table>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogPvVisible = false">confirm</el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
 
@@ -424,16 +254,16 @@ export default {
           { type: 'success', label: '已通过' },
           { type: 'danger', label: '不通过' },
         ],
-        urls: [
-          'https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg',
-          'https://fuss10.elemecdn.com/1/34/19aa98b1fcb2781c4fba33d850549jpeg.jpeg',
-          'https://fuss10.elemecdn.com/0/6f/e35ff375812e6b0020b6b4e8f9583jpeg.jpeg',
-          'https://fuss10.elemecdn.com/9/bb/e27858e973f5d7d3904835f46abbdjpeg.jpeg',
-          'https://fuss10.elemecdn.com/d/e6/c4d93a3805b3ce3f323f7974e6f78jpeg.jpeg',
-          'https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg',
-          'https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg'
-          ],
-      
+      urls: [
+        'https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg',
+        'https://fuss10.elemecdn.com/1/34/19aa98b1fcb2781c4fba33d850549jpeg.jpeg',
+        'https://fuss10.elemecdn.com/0/6f/e35ff375812e6b0020b6b4e8f9583jpeg.jpeg',
+        'https://fuss10.elemecdn.com/9/bb/e27858e973f5d7d3904835f46abbdjpeg.jpeg',
+        'https://fuss10.elemecdn.com/d/e6/c4d93a3805b3ce3f323f7974e6f78jpeg.jpeg',
+        'https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg',
+        'https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg'
+        ],
+    
       showAll: false,
       multipleSelection: [],
       tableKey: 0,
@@ -662,9 +492,12 @@ export default {
     imgDelete() {
       alert('确定删除图片吗？')
     },
-    pppp() {
-      return '确定删除图片吗？'
+
+    submitForm(items){
+      console.log(items);
     }
+
+
   }
 }
 </script>
@@ -720,6 +553,10 @@ export default {
   .grid-content {
     border-radius: 4px;
     min-height: 30px;
+    line-height: center;
+  }
+  .line-height-content{
+    line-height: center;
   }
   .row-bg {
     padding: 10px 0;
