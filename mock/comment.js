@@ -30,7 +30,7 @@ for (let i = 0; i < count; i++) {
     orderId: '@integer(4000000000, 9000000000)',
     image_uri,
     platforms: ['a-platform'],
-    imageAuditStatus: '@integer(0, 2)',
+    'imageAuditStatus|1': [1, 0, -1],
     userPin: '@first',
     userNickName: '@first'
   }))
@@ -45,7 +45,7 @@ export default [
 
       let mockList = List.filter(item => {
         if (pin && item.pin !== pin) return false
-        if (auditStatus && item.status !== Number(auditStatus)) return false
+        if (auditStatus && item.imageAuditStatus !== Number(auditStatus)) return false
         if (topStatus && item.topStatus !== Number(topStatus)) return false
         if (grade && item.importance !== +Number(grade)) return false
         if (sku && item.sku !== Number(sku)) return false

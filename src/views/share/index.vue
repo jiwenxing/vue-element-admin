@@ -62,6 +62,8 @@
     </div>
     <el-divider />
     <pagination v-show="total>=10" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" style="padding: 20px 0 5px" @pagination="getList" />
+    <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
+    <div style="margin: 15px 0;"></div>
     <el-form ref="form" :model="items" label-width="80px">
       <div v-for ="item in list" :key="item">
         <div class="well">
@@ -70,9 +72,16 @@
               <el-row style="margin-bottom: 5px;">
                 <el-col :span="5">
                   <div class="grid-content">
+                    <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
+                      <el-checkbox v-for="city in cities" :label="city" :key="city"></el-checkbox>
+                    </el-checkbox-group>
                     <span>审核状态：</span>
-                    <el-tag size="small" :key="items[item.imageAuditStatus].label" :type="items[item.imageAuditStatus].type" effect="dark">{{ items[item.imageAuditStatus].label }}</el-tag>
-                    <!-- <el-tag v-for="item in items" :key="item.label" :type="item.type" effect="dark">{{ item.label }}</el-tag> -->
+                    <el-tag size="small" :type="item.imageAuditStatus | statusFilter" effect="dark">
+                      {{ item.imageAuditStatus | statusShowFilter }}
+                    </el-tag>
+                    <!-- <el-tag v-if="row.status==1 && row.topStatus!=0" :type="row.topStatus | statusFilter" effect="plain">
+                      <i :class="row.topStatus | topStatusIconFilter" />
+                    </el-tag> -->
                   </div>
                 </el-col>
                 <el-col :span="5"><div class="grid-content"><span>用户账号：</span>{{item.userPin}}</div></el-col>
@@ -91,11 +100,14 @@
                     </el-row>
                 </el-col>
                 <el-col :span="5"><span>商品号：</span>{{item.sku}}</el-col>
-                <el-col :span="9">
-                  <span>商品名称：</span><el-link type="primary" :href="'http://item.jd.com/' + item.sku + '.html'" target="_blank">{{item.commodityName}}</el-link>
+                <el-col :span="9" class="hidden-text">
+                  <span>商品名称：</span>
+                  <el-link type="primary" :href="'http://item.jd.com/' + item.sku + '.html'" target="_blank">
+                    <span>{{item.commodityName}}</span>
+                  </el-link>
                 </el-col>
               </el-row>
-              <el-row >
+              <el-row class="hidden-text">
                 <div class="grid-content"><span>原文评价：</span>{{item.content}}</div>
               </el-row>
               <el-row style="margin-bottom: 25px;">
@@ -125,10 +137,10 @@
             <el-col :span="2">
               <template>
                 <div style="margin-top: 20px">
-                  <el-radio class="center-horizontal" v-model="item.imageAuditStatus" label=1 border size="medium">通过</el-radio>
+                  <el-radio class="center-horizontal" v-model="item.imageAuditStatus" label=1 border size="medium">通过&nbsp&nbsp&nbsp</el-radio>
                 </div>
                 <div style="margin-top: 20px">
-                  <el-radio class="center-horizontal" v-model="item.imageAuditStatus" label=2 border size="medium">不通过</el-radio>
+                  <el-radio class="center-horizontal" v-model="item.imageAuditStatus" label=-1 border size="medium">不通过</el-radio>
                 </div>
                 <div style="margin-top: 20px">
                   <el-radio class="center-horizontal" v-model="item.imageAuditStatus" label=0 border size="medium">不处理</el-radio>
@@ -150,18 +162,38 @@
     </el-form>
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" style="padding: 20px 0 5px" @pagination="getList" />
+    <el-tooltip placement="top" content="Back to Top">
+      <back-to-top :custom-style="myBackToTopStyle" :visibility-height="400" :back-position="50" transition-name="fade" />
+    </el-tooltip>
+
+    <!-- <el-backtop target=".page-component__scroll .el-scrollbar__wrap" :bottom="100">
+      <div
+        style="{
+          height: 100%;
+          width: 100%;
+          background-color: #f2f5f6;
+          box-shadow: 0 0 6px rgba(0,0,0, .12);
+          text-align: center;
+          line-height: 40px;
+          color: #1989fa;
+        }"
+      >
+        UP
+      </div>
+    </el-backtop> -->
+
   </div>
 </template>
 
 <script>
-import { fetchPv, createArticle } from '@/api/article'
-import { fetchList, updateContent } from '@/api/comment'
+import { fetchList, updateContent, batchAuditSelected, updateAuditStatus, updateTopStatus } from '@/api/comment'
 import waves from '@/directive/waves' // waves directive
 import { getToken } from '@/utils/auth' // get token from cookie
 // import { parseTime } from '@/utils/index'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import Category from '@/components/Category'
 import DateTimePicker from '@/components/DateTimePicker'
+import BackToTop from '@/components/BackToTop'
 
 const auditStatusOptions = [
   { key: 1, display_name: 'Passed' },
@@ -185,22 +217,22 @@ const shareStatusOptions = [
 
 export default {
   name: 'ComplexTable',
-  components: { Pagination, Category, DateTimePicker },
+  components: { Pagination, Category, DateTimePicker, BackToTop },
   directives: { waves },
   filters: {
     statusFilter(status) {
       const statusMap = {
         '1': 'success',
-        '0': 'info',
+        '0': '',
         '-1': 'danger'
       }
       return statusMap[status]
     },
     statusShowFilter(status) {
       const statusMap = {
-        '1': 'Passed',
-        '0': 'Auditing',
-        '-1': 'Deleted'
+        '1': '已通过',
+        '0': '待审核',
+        '-1': '未通过'
       }
       return statusMap[status]
     },
@@ -227,11 +259,6 @@ export default {
       changeCommentDialogVisible:false,
       bigImgDialog:false,
       score:4.7,
-      items: [
-          { type: '', label: '待审核' },
-          { type: 'success', label: '已通过' },
-          { type: 'danger', label: '不通过' },
-        ],
       urls: [
         'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1560635595940&di=88442870c2db5e4f352c72e8a073565c&imgtype=0&src=http%3A%2F%2Fimage.uc.cn%2Fo%2Fwemedia%2Fs%2Fupload%2F2019%2FxlCJf41d76bj3a5%2F6025017828e55d8441b27d8920f240b1.png%3B%2C3%2Cjpegx%3B3%2C310x',
         'https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg',
@@ -244,7 +271,15 @@ export default {
         'https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg'
         ],
       comment_content: '',
-    
+      myBackToTopStyle: {
+        right: '50px',
+        bottom: '50px',
+        width: '40px',
+        height: '40px',
+        'border-radius': '4px',
+        'line-height': '45px', // 请保持与高度一致以垂直居中 Please keep consistent with height to center vertically
+        background: '#e7eaf1'// 按钮的背景颜色 The background color of the button
+      },
       showAll: false,
       multipleSelection: [],
       tableKey: 0,
@@ -530,5 +565,10 @@ export default {
   .demo-block-control:hover {
     color:#409eff;
     background-color:#f9fafc
+  }
+  .hidden-text{
+    white-space: nowrap;
+    text-overflow:ellipsis;
+    overflow: hidden;
   }
 </style>
