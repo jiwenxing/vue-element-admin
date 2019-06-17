@@ -254,7 +254,7 @@
 </template>
 
 <script>
-import { fetchList, updateContent, batchAuditSelected } from '@/api/comment'
+import { fetchList, updateContent, batchAuditSelected, updateAuditStatus, updateTopStatus } from '@/api/comment'
 import waves from '@/directive/waves' // waves directive
 import { getToken } from '@/utils/auth' // get token from cookie
 // import { parseTime } from '@/utils/index'
@@ -325,8 +325,9 @@ export default {
     return {
       showAll: false,
       multipleSelection: {
-        ids: [],
-        status: undefined,
+        commentIds: [],
+        textStatus: undefined,
+        topStatus: undefined,
         token: ''
       },
       tableKey: 0,
@@ -346,8 +347,9 @@ export default {
       statusOptions: ['passed', 'auditing', 'deleted'],
       temp: {
         id: undefined,
-        score: 1,
-        timestamp: new Date()
+        score: undefined,
+        timestamp: new Date(),
+        status: undefined
       },
       myBackToTopStyle: {
         right: '50px',
@@ -415,24 +417,48 @@ export default {
       return ''
     },
     handleModifyAuditStatus(row, status) {
-      this.$message({
-        message: '操作成功',
-        type: 'success'
+      const param = Object.assign({}, this.temp)
+      param.id = row.id
+      param.status = status
+      let action = 'Pass'
+      if (status === -1) {
+        action = 'Delete'
+      }
+      updateAuditStatus(param).then(() => {
+        row.status = status
+        this.$notify({
+          title: 'Success',
+          message: action + ' Successfully',
+          type: 'success',
+          duration: 2000
+        })
       })
-      row.status = status
     },
     handleModifyTopStatus(row, status) {
-      this.$message({
-        message: '操作成功',
-        type: 'success'
+      const param = Object.assign({}, this.temp)
+      param.id = row.id
+      param.status = status
+      let action = 'Top'
+      if (status === -1) {
+        action = 'Sink'
+      } else if (status === 0) {
+        action = 'Reset'
+      }
+      updateTopStatus(param).then(() => {
+        row.topStatus = status
+        this.$notify({
+          title: 'Success',
+          message: action + ' Successfully',
+          type: 'success',
+          duration: 2000
+        })
       })
-      row.topStatus = status
     },
     handleSelectionChange(val) {
-      this.multipleSelection.ids = Array.from(val, x => x.id)
+      this.multipleSelection.commentIds = Array.from(val, x => x.id)
     },
     batchAuditSelected(status) {
-      if (this.multipleSelection.ids.length === 0) {
+      if (this.multipleSelection.commentIds.length === 0) {
         this.$message({
           message: 'nothing selected',
           type: 'warning'
@@ -440,8 +466,8 @@ export default {
         return
       }
       this.listLoading = true
-      const selectedIds = this.multipleSelection.ids
-      this.multipleSelection.status = status
+      const selectedIds = this.multipleSelection.commentIds
+      this.multipleSelection.textStatus = status
       this.multipleSelection.token = getToken()
       setTimeout(() => {
         batchAuditSelected(this.multipleSelection).then(() => {
