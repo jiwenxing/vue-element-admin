@@ -3,54 +3,59 @@
     <div class="filter-container">
       <el-form :inline="true" :model="listQuery" class="demo-form-inline" label-width="120px">
         <el-form-item label="Audit Status">
-          <el-select v-model="listQuery.auditStatus" placeholder="audit status" clearable style="width: 150px" class="filter-item bottom-space">
+          <el-select v-model="listQuery.auditStatus" placeholder="audit status" clearable style="width: 150px" class="filter-item">
             <el-option v-for="item in auditStatusOptions" :key="item.key" :label="item.display_name" :value="item.key" />
           </el-select>
         </el-form-item>
         <el-form-item label="User Account">
-          <el-input v-model="listQuery.pin" placeholder="pin" style="width: 150px" class="filter-item bottom-space" @keyup.enter.native="handleFilter" />
+          <el-input v-model="listQuery.pin" placeholder="pin" style="width: 150px" class="filter-item" @keyup.enter.native="handleFilter" />
         </el-form-item>
         <el-form-item label="SKU">
-          <el-input v-model="listQuery.sku" placeholder="commodity number" style="width: 150px" class="filter-item bottom-space" @keyup.enter.native="handleFilter" />
+          <el-input v-model="listQuery.sku" placeholder="commodity number" style="width: 150px" class="filter-item" @keyup.enter.native="handleFilter" />
         </el-form-item>
         <el-form-item label="Order ID">
-          <el-input v-model="listQuery.orderId" placeholder="order number" style="width: 150px" class="filter-item bottom-space" @keyup.enter.native="handleFilter" />
+          <el-input v-model="listQuery.orderId" placeholder="order number" style="width: 150px" class="filter-item" @keyup.enter.native="handleFilter" />
         </el-form-item>
         <br>
         <el-form-item label="Top Status">
-          <el-select v-model="listQuery.topStatus" placeholder="top status" clearable style="width: 150px" class="filter-item bottom-space">
+          <el-select v-model="listQuery.topStatus" placeholder="top status" clearable style="width: 150px" class="filter-item">
             <el-option v-for="item in topStatusOptions" :key="item.key" :label="item.display_name" :value="item.key" />
           </el-select>
         </el-form-item>
-        <el-form-item label="Share Status">
-          <el-select v-model="listQuery.shareStatus" placeholder="share status" clearable style="width: 150px" class="filter-item bottom-space">
-            <el-option v-for="item in shareStatusOptions" :key="item.key" :label="item.display_name" :value="item.key" />
-          </el-select>
-        </el-form-item>
         <el-form-item label="Grade">
-          <el-select v-model="listQuery.grade" placeholder="grade" clearable style="width: 150px" class="filter-item bottom-space">
+          <el-select v-model="listQuery.grade" placeholder="grade" clearable style="width: 150px" class="filter-item">
             <el-option v-for="item in gradeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
           </el-select>
         </el-form-item>
-        <el-form-item label="Nick Name">
-          <el-input v-model="listQuery.orderId" placeholder="nick name" style="width: 150px" class="filter-item bottom-space" @keyup.enter.native="handleFilter" />
-        </el-form-item>
-        <br>
-
         <el-form-item label="Keyword">
-          <el-input v-model="listQuery.keyword" placeholder="keyword" style="width: 435px" class="filter-item bottom-space" @keyup.enter.native="handleFilter" />
-        </el-form-item>
-        <el-form-item label="Category">
-          <category @cate-change="listQuery.category=$event" />
+          <el-input v-model="listQuery.keyword" placeholder="keyword" style="width: 435px" class="filter-item" @keyup.enter.native="handleFilter" />
         </el-form-item>
         <br>
         <el-form-item label="Comment Time">
           <date-time-picker @time-change="listQuery.timeRange=$event" />
         </el-form-item>
-        <el-button v-waves class="filter-item bottom-space" type="primary" icon="el-icon-search" @click="handleFilter">
+        <div v-if="showAll">
+          <el-form-item label="Nick Name">
+            <el-input v-model="listQuery.orderId" placeholder="nick name" style="width: 150px" class="filter-item" @keyup.enter.native="handleFilter" />
+          </el-form-item>
+          <el-form-item label="Share Status">
+            <el-select v-model="listQuery.shareStatus" placeholder="share status" clearable style="width: 150px" class="filter-item">
+              <el-option v-for="item in shareStatusOptions" :key="item.key" :label="item.display_name" :value="item.key" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="Category">
+            <category @cate-change="listQuery.category=$event" />
+          </el-form-item>
+        </div>
+        <div class="demo-block-control" style="left: 0px;" @click="showAll = !showAll">
+          <i :class="[showAll ? 'el-icon-caret-top' : 'el-icon-caret-bottom']" />
+          <span v-if="showAll" class="tips">hide extra filter options</span>
+          <span v-else class="tips">show more filter options</span>
+        </div>
+        <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
           Search
         </el-button>
-        <el-button v-waves class="filter-item bottom-space" type="danger" icon="el-icon-delete" @click="resetSearch">
+        <el-button v-waves class="filter-item" type="danger" icon="el-icon-delete" @click="resetSearch">
           Clear
         </el-button>
       </el-form>
@@ -88,7 +93,7 @@
               <span>{{ row.reviewer }}</span>
             </el-form-item>
             <el-form-item label="Commodity Name:">
-              <span>{{ row.title }}</span>
+              <span>{{ row.commodityName }}</span>
             </el-form-item>
             <el-form-item label="Price:">
               <span>{{ row.forecast }}</span>
@@ -120,7 +125,7 @@
       <el-table-column label="Commodity" min-width="100px">
         <template slot-scope="{row}">
           <el-tooltip placement="top">
-            <div slot="content">{{ row.title }}</div>
+            <div slot="content">{{ row.commodityName }}</div>
             <el-link icon="el-icon-link" :underline="false" type="info" :href="'https://item.jd.com/' + row.sku + '.html'" target="_blank">{{ row.sku }}</el-link>
           </el-tooltip>
         </template>
@@ -175,48 +180,52 @@
       </el-table-column>
       <el-table-column label="Actions" align="center" width="250" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-button v-if="row.status==1" size="mini" type="danger" @click="handleModifyStatus(row, -1)">
+          <el-button v-if="row.status==1" plain size="mini" type="danger" @click="handleModifyAuditStatus(row, -1)">
             Delete
           </el-button>
-          <el-button v-if="row.status==-1" size="mini" type="success" @click="handleModifyStatus(row, 1)">
+          <el-button v-if="row.status==-1" plain size="mini" type="success" @click="handleModifyAuditStatus(row, 1)">
             Pass
           </el-button>
-          <el-button v-if="row.status==0" size="mini" type="success" @click="handleModifyStatus(row, 1)">
+          <el-button v-if="row.status==0" plain size="mini" type="success" @click="handleModifyAuditStatus(row, 1)">
             Passed
           </el-button>
-          <el-button v-if="row.status==0" size="mini" type="danger" @click="handleModifyStatus(row, -1)">
+          <el-button v-if="row.status==0" plain size="mini" type="danger" @click="handleModifyAuditStatus(row, -1)">
             Delete
           </el-button>
-          <el-button v-if="(row.topStatus==0 || row.topStatus==-1) && row.status==1" size="mini" type="success" @click="handleModifyTopStatus(row, 1)">
+          <el-button v-if="(row.topStatus==0 || row.topStatus==-1) && row.status==1" plain size="mini" type="success" @click="handleModifyTopStatus(row, 1)">
             Top
           </el-button>
-          <el-button v-if="(row.topStatus==0 || row.topStatus==1) && row.status==1" size="mini" type="danger" @click="handleModifyTopStatus(row, -1)">
+          <el-button v-if="(row.topStatus==0 || row.topStatus==1) && row.status==1" plain size="mini" type="danger" @click="handleModifyTopStatus(row, -1)">
             Sink
           </el-button>
-          <el-button v-if="(row.status==1 && row.topStatus!=0) && row.status==1" size="mini" type="info" @click="handleModifyTopStatus(row, 0)">
+          <el-button v-if="(row.status==1 && row.topStatus!=0) && row.status==1" plain size="mini" type="info" @click="handleModifyTopStatus(row, 0)">
             Nomal
           </el-button>
         </template>
       </el-table-column>
     </el-table>
+    <el-footer>
+      <el-button size="small" type="primary" @click="batchAuditSelected(1)">Pass Selected</el-button>
+      <el-button size="small" type="danger" @click="batchAuditSelected(-1)">Delete Selected</el-button>
+    </el-footer>
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" style="padding: 20px 0 5px" @pagination="getList" />
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 500px; margin-left:50px;">
         <!-- <el-form-item label="Begin Time" prop="type">
-          <el-select v-model="temp.type" class="filter-item bottom-space" placeholder="Please select">
+          <el-select v-model="temp.type" class="filter-item" placeholder="Please select">
             <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
           </el-select>
         </el-form-item>
         <el-form-item label="End Time" prop="timestamp">
           <el-date-picker v-model="temp.timestamp" type="datetime" placeholder="Please pick a date" />
         </el-form-item> -->
-        <el-form-item label="Content" label-width="90px" prop="content" :rules="[{ required: true, message: 'Content cannot be empty!'}]">
-          <el-input v-model="temp.content" type="textarea" :rows="3" />
+        <el-form-item label="Content" label-width="80px" prop="content">
+          <el-input v-model="temp.content" type="textarea" maxlength="500" show-word-limit :rows="5" style="width:500px;" />
         </el-form-item>
         <!-- <el-form-item :label="$t('table.status')">
-          <el-select v-model="temp.status" class="filter-item bottom-space" placeholder="Please select">
+          <el-select v-model="temp.status" class="filter-item" placeholder="Please select">
             <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
@@ -231,33 +240,28 @@
         <el-button @click="dialogFormVisible = false">
           cancel
         </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
+        <el-button type="primary" @click="updateData">
           confirm
         </el-button>
       </div>
     </el-dialog>
 
-    <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
-      <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
-        <el-table-column prop="key" label="Channel" />
-        <el-table-column prop="pv" label="Pv" />
-      </el-table>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogPvVisible = false">confirm</el-button>
-      </span>
-    </el-dialog>
+    <!-- back to top -->
+    <el-tooltip placement="top" content="Back to Top">
+      <back-to-top :custom-style="myBackToTopStyle" :visibility-height="400" :back-position="50" transition-name="fade" />
+    </el-tooltip>
   </div>
 </template>
 
 <script>
-import { fetchPv, createArticle } from '@/api/article'
-import { fetchList, updateContent } from '@/api/comment'
+import { fetchList, updateContent, batchAuditSelected, updateAuditStatus, updateTopStatus } from '@/api/comment'
 import waves from '@/directive/waves' // waves directive
 import { getToken } from '@/utils/auth' // get token from cookie
 // import { parseTime } from '@/utils/index'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import Category from '@/components/Category'
 import DateTimePicker from '@/components/DateTimePicker'
+import BackToTop from '@/components/BackToTop'
 
 const auditStatusOptions = [
   { key: 1, display_name: 'Passed' },
@@ -280,8 +284,8 @@ const shareStatusOptions = [
 ]
 
 export default {
-  name: 'ComplexTable',
-  components: { Pagination, Category, DateTimePicker },
+  name: 'CommentTable',
+  components: { Pagination, Category, DateTimePicker, BackToTop },
   directives: { waves },
   filters: {
     statusFilter(status) {
@@ -320,7 +324,12 @@ export default {
   data() {
     return {
       showAll: false,
-      multipleSelection: [],
+      multipleSelection: {
+        commentIds: [],
+        textStatus: undefined,
+        topStatus: undefined,
+        token: ''
+      },
       tableKey: 0,
       list: null,
       total: 0,
@@ -328,10 +337,7 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
-        auditStatus: 0,
-        title: undefined,
-        type: undefined,
-        sort: '+id'
+        auditStatus: 0
       },
       scoreOptions: [1, 2, 3],
       auditStatusOptions,
@@ -339,15 +345,20 @@ export default {
       topStatusOptions,
       shareStatusOptions,
       statusOptions: ['passed', 'auditing', 'deleted'],
-      showReviewer: false,
       temp: {
         id: undefined,
-        score: 1,
-        remark: '',
+        score: undefined,
         timestamp: new Date(),
-        title: '',
-        type: '',
-        status: 'published'
+        status: undefined
+      },
+      myBackToTopStyle: {
+        right: '50px',
+        bottom: '50px',
+        width: '40px',
+        height: '40px',
+        'border-radius': '4px',
+        'line-height': '45px', // 请保持与高度一致以垂直居中 Please keep consistent with height to center vertically
+        background: '#e7eaf1'// 按钮的背景颜色 The background color of the button
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -355,14 +366,11 @@ export default {
         update: 'Edit',
         create: 'Create'
       },
-      dialogPvVisible: false,
-      pvData: [],
       rules: {
-        type: [{ required: true, message: 'type is required', trigger: 'change' }],
-        timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
-        title: [{ required: true, message: 'content is required', trigger: 'blur' }]
-      },
-      downloadLoading: false
+        // type: [{ required: true, message: 'type is required', trigger: 'change' }],
+        // timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
+        content: [{ required: true, message: 'content is required', trigger: 'blur' }]
+      }
     }
   },
   created() {
@@ -408,89 +416,78 @@ export default {
       }
       return ''
     },
-    cancelEdit(row) {
-      row.content = row.originalContent
-      row.edit = false
-      this.$message({
-        message: 'The title has been restored to the original value',
-        type: 'warning'
+    handleModifyAuditStatus(row, status) {
+      const param = Object.assign({}, this.temp)
+      param.id = row.id
+      param.status = status
+      let action = 'Pass'
+      if (status === -1) {
+        action = 'Delete'
+      }
+      updateAuditStatus(param).then(() => {
+        row.status = status
+        this.$notify({
+          title: 'Success',
+          message: action + ' Successfully',
+          type: 'success',
+          duration: 2000
+        })
       })
-    },
-    confirmEdit(row) {
-      row.edit = false
-      row.originalContent = row.content
-      this.$message({
-        message: 'The title has been edited',
-        type: 'success'
-      })
-    },
-    handleModifyStatus(row, status) {
-      this.$message({
-        message: '操作成功',
-        type: 'success'
-      })
-      row.status = status
     },
     handleModifyTopStatus(row, status) {
-      this.$message({
-        message: '操作成功',
-        type: 'success'
-      })
-      row.topStatus = status
-    },
-    sortChange(data) {
-      const { prop, order } = data
-      if (prop === 'id') {
-        this.sortByID(order)
+      const param = Object.assign({}, this.temp)
+      param.id = row.id
+      param.status = status
+      let action = 'Top'
+      if (status === -1) {
+        action = 'Sink'
+      } else if (status === 0) {
+        action = 'Reset'
       }
+      updateTopStatus(param).then(() => {
+        row.topStatus = status
+        this.$notify({
+          title: 'Success',
+          message: action + ' Successfully',
+          type: 'success',
+          duration: 2000
+        })
+      })
     },
     handleSelectionChange(val) {
-      this.multipleSelection = val
+      this.multipleSelection.commentIds = Array.from(val, x => x.id)
     },
-    sortByID(order) {
-      if (order === 'ascending') {
-        this.listQuery.sort = '+id'
-      } else {
-        this.listQuery.sort = '-id'
+    batchAuditSelected(status) {
+      if (this.multipleSelection.commentIds.length === 0) {
+        this.$message({
+          message: 'nothing selected',
+          type: 'warning'
+        })
+        return
       }
-      this.handleFilter()
-    },
-    resetTemp() {
-      this.temp = {
-        id: undefined,
-        score: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        status: 'published',
-        type: ''
-      }
-    },
-    handleCreate() {
-      this.resetTemp()
-      this.dialogStatus = 'create'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    createData() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
-          this.temp.author = 'vue-element-admin'
-          createArticle(this.temp).then(() => {
-            this.list.unshift(this.temp)
-            this.dialogFormVisible = false
-            this.$notify({
-              title: '成功',
-              message: '创建成功',
-              type: 'success',
-              duration: 2000
-            })
+      this.listLoading = true
+      const selectedIds = this.multipleSelection.commentIds
+      this.multipleSelection.textStatus = status
+      this.multipleSelection.token = getToken()
+      setTimeout(() => {
+        batchAuditSelected(this.multipleSelection).then(() => {
+          this.list.forEach(function(item, index, arr) {
+            const hit = selectedIds.findIndex(function(value, index, arr) {
+              return value === item.id
+            }) > -1
+            if (hit) {
+              item.status = status
+            }
           })
-        }
-      })
+        })
+        this.listLoading = false
+        this.$notify({
+          title: 'Success',
+          message: 'All Selected Comments Audited',
+          type: 'success',
+          duration: 2000
+        })
+      }, 1 * 1000)
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
@@ -525,22 +522,6 @@ export default {
           })
         }
       })
-    },
-    handleDelete(row) {
-      this.$notify({
-        title: '成功',
-        message: '删除成功',
-        type: 'success',
-        duration: 2000
-      })
-      const index = this.list.indexOf(row)
-      this.list.splice(index, 1)
-    },
-    handleFetchPv(pv) {
-      fetchPv(pv).then(response => {
-        this.pvData = response.data.pvData
-        this.dialogPvVisible = true
-      })
     }
   }
 }
@@ -554,9 +535,6 @@ export default {
   position: absolute;
   right: 15px;
   top: 10px;
-}
-.bottom-space {
-  margin-bottom: 5px;
 }
 /* .demo-table-expand {
   font-size: 0;
@@ -577,7 +555,28 @@ export default {
 .danger-row {
   background-color: #e2d2d5;
 }
-/* .demo-block-control{box-sizing:border-box;background-color:#fff;border-bottom-left-radius:4px;border-bottom-right-radius:4px;text-align:center;margin-top:-1px;color:#d3dce6;cursor:pointer;position:relative}
-.demo-block-control:hover{color:#409eff;background-color:#f9fafc} */
+.el-footer {
+  border: solid 2px #ebeef5;
+  border-top: 0px;
+  color: #333;
+  text-align: left;
+  line-height: 60px;
+  border-radius: 2px;
+}
+.demo-block-control {
+  box-sizing:border-box;
+  background-color:#fff;
+  border-bottom-left-radius:4px;
+  border-bottom-right-radius:4px;
+  text-align:center;
+  margin-top:-1px;
+  color:#d3dce6;
+  cursor:pointer;
+  position:relative
+}
+.demo-block-control:hover {
+  color:#409eff;
+  background-color:#f9fafc
+}
 
 </style>

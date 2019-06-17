@@ -15,16 +15,12 @@
 
 ```bash
 # 克隆项目
-git clone https://github.com/PanJiaChen/vue-admin-template.git
-
+git clone http://git.jd.com/mclab/komento-admin-vue.git
 # 进入项目目录
-cd vue-admin-template
+cd komento-admin-vue
 
 # 安装依赖
 npm install
-
-# 建议不要直接使用 cnpm 安装以来，会有各种诡异的 bug。可以通过如下操作解决 npm 下载速度慢的问题
-npm install --registry=https://registry.npm.taobao.org
 
 # 启动服务
 npm run dev
@@ -64,11 +60,11 @@ npm run lint -- --fix
 - [x] mock
 - [x] elementUI 按需引入
 - [x] 表格下拉展示更多内容
-- [ ] 评价页面demo，crud，搜索框优化
+- [x] 评价页面demo，crud，搜索框优化
 - [ ] 国际化
 - [ ] 工程结构优化
 - [ ] 统一异常处理
-- [ ] 登陆拦截
+- [ ] 登陆拦截，权限校验
 - [ ] 一周评价数据看板，好中差统计、待审删除通过、文本晒图晒视频
 
 

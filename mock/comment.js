@@ -15,7 +15,7 @@ for (let i = 0; i < count; i++) {
     ip: '@ip',
     reviewer: '@first',
     category: '@first',
-    title: '@title(5, 10)',
+    commodityName: '@title(5, 10)',
     content_short: 'mock data',
     content: '@sentence(3, 27)',
     forecast: '@float(0, 100, 2, 2)',
@@ -60,7 +60,7 @@ export default [
       const pageList = mockList.filter((item, index) => index < limit * page && index >= limit * (page - 1))
 
       return {
-        code: 20000,
+        code: '1',
         data: {
           total: mockList.length,
           items: pageList
@@ -104,7 +104,7 @@ export default [
   },
 
   {
-    url: '/article/create',
+    url: '/comment/batchAuditSelected',
     type: 'post',
     response: _ => {
       return {

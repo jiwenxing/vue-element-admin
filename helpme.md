@@ -14,12 +14,26 @@ vue ui
 ```bash
 npm install -g serve
 # -s 参数的意思是将其架设在 Single-Page Application 模式下
-# 这个模式会处理即将提到的路由问题
 serve -s dist
 ```
 
 ## icon
-https://panjiachen.github.io/vue-element-admin-site/zh/guide/advanced/icon.html#%E7%94%9F%E6%88%90%E5%9B%BE%E6%A0%87%E5%BA%93%E4%BB%A3%E7%A0%81
-icon 使用请参考[此处]()
+icon 使用请参考[此处](https://panjiachen.github.io/vue-element-admin-site/zh/guide/advanced/icon.html#%E7%94%9F%E6%88%90%E5%9B%BE%E6%A0%87%E5%BA%93%E4%BB%A3%E7%A0%81)
 为保持风格一致，icon 下载请设置颜色为 #e6e6e6
+
+## axios 请求参数处理
+参考：https://www.jianshu.com/p/4489934af4fb
+
+1. npm install --save qs
+2. 在 request.js 的 axios 配置添加    
+```js
+import qs from 'qs'
+const service = axios.create({
+  // ...
+  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  transformRequest: [function(data) {
+    return qs.stringify(data)
+  }]
+})
+```
 
