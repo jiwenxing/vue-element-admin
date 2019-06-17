@@ -70,45 +70,31 @@ export default [
   },
 
   {
-    url: '/article/detail',
-    type: 'get',
-    response: config => {
-      const { id } = config.query
-      for (const article of List) {
-        if (article.id === +id) {
-          return {
-            code: 20000,
-            data: article
-          }
-        }
-      }
-    }
-  },
-
-  {
-    url: '/article/pv',
-    type: 'get',
-    response: _ => {
-      return {
-        code: 20000,
-        data: {
-          pvData: [
-            { key: 'PC', pv: 1024 },
-            { key: 'mobile', pv: 1024 },
-            { key: 'ios', pv: 1024 },
-            { key: 'android', pv: 1024 }
-          ]
-        }
-      }
-    }
-  },
-
-  {
     url: '/comment/batchAuditSelected',
     type: 'post',
     response: _ => {
       return {
-        code: 20000,
+        code: '1',
+        data: 'success'
+      }
+    }
+  },
+  {
+    url: '/comment/updateAuditStatus',
+    type: 'post',
+    response: _ => {
+      return {
+        code: '1',
+        data: 'success'
+      }
+    }
+  },
+  {
+    url: '/comment/updateTopStatus',
+    type: 'post',
+    response: _ => {
+      return {
+        code: '1',
         data: 'success'
       }
     }
@@ -119,7 +105,7 @@ export default [
     type: 'post',
     response: _ => {
       return {
-        code: 20000,
+        code: '1',
         data: 'success'
       }
     }
