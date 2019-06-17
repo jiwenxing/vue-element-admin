@@ -57,7 +57,7 @@
     </div>
     <el-divider />
 
-    <div class="well">
+    <!-- <div class="well">
       <el-row>
         <el-col :span="22">
           <el-row>
@@ -102,7 +102,7 @@
               </el-dialog>
               <el-link type="primary" href='http://item.jd.com/18164614013.html' target="_blank">查看回复</el-link>
           </el-row>
-          <!-- <el-row >
+          <el-row >
             <el-col :span="2" v-for ="item in urls" :key="item">
               <img :src="item" style="width: 100px; height: 100px" title="点击放大" @click="bigImgDialog = true">
               <i class="el-icon-error" title="点击删除" style="position: relative; bottom:98px; right:10px; width: 10px; height: 10px; color:red" @click="imgDelete()"></i>
@@ -120,7 +120,7 @@
                 <el-button type="primary" @click="bigImgDialog = false">确 定</el-button>
               </span>
             </el-dialog>
-          </el-row> -->
+          </el-row>
 
             <el-row >
               <el-col :span="2" v-for ="item in urls" :key="item">
@@ -149,24 +149,101 @@
         </el-col>
       </el-row>
     </div>
-
-
-    
-    
+     -->
     <pagination v-show="total>=10" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" style="padding: 20px 0 5px" @pagination="getList" />
     
     <el-form ref="form" :model="items" label-width="80px">
       
-      <div v-for ="item in items" :key="item">
+      <!-- <div v-for ="item in list" :key="item">
         <el-form-item label="活动名称">
-          {{item.type}}
-           <el-input v-model="item.type" ></el-input>
+          {{item.pin}}
+           <el-input v-model="item.pin" ></el-input>
         </el-form-item>
+      </div> -->
+
+      <div v-for ="item in list" :key="item">
+        <div class="well">
+          <el-row>
+            <el-col :span="22">
+              <el-row>
+                <el-col :span="5">
+                  <div class="grid-content">
+                    <span>审核状态：</span>
+                    <el-tag :key="items[item.imageAuditStatus].label" :type="items[item.imageAuditStatus].type" effect="dark">{{ items[item.imageAuditStatus].label }}</el-tag>
+                    <!-- <el-tag v-for="item in items" :key="item.label" :type="item.type" effect="dark">{{ item.label }}</el-tag> -->
+                  </div>
+                </el-col>
+                <el-col :span="5"><div class="grid-content"><span>用户账号：</span>{{item.userPin}}</div></el-col>
+                <el-col :span="5"><div class="grid-content"><span>用户昵称：</span>{{item.userNickName}}</div></el-col>
+                <el-col :span="5"><div class="grid-content"><span>评价时间：</span>{{item.display_time}}</div></el-col>
+                <el-col :span="4"><div class="grid-content"><span>IP地址：</span>{{item.ip}}</div></el-col>
+              </el-row>
+              <el-row>
+                <el-col :span="5"><span>订单号：</span>{{item.orderId}}</el-col>
+                <el-col :span="5">
+                    <el-row>
+                      <el-col :span="5"><span>评分：</span></el-col>
+                      <el-col :span="19">
+                          <el-rate v-model="item.score" disabled show-score text-color="#ff9900"></el-rate>
+                      </el-col>
+                    </el-row>
+                </el-col>
+                <el-col :span="5"><span>商品号：</span>{{item.sku}}</el-col>
+                <el-col :span="9">
+                  <span>商品名称：</span><el-link type="primary" :href="'http://item.jd.com/' + item.sku + '.html'" target="_blank">{{item.title}}</el-link>
+                </el-col>
+              </el-row>
+              <el-row>
+                <div class="grid-content"><span>原文评价：</span>{{item.content}}</div>
+              </el-row>
+              <el-row>
+                  <span>展示评价：</span>{{item.content}}
+                  <el-button type="text" size="medium" round @click="readCommentContent(item.content),changeCommentDialogVisible = true">修改</el-button>
+                  <el-dialog title="修改评价展示内容" :visible.sync="changeCommentDialogVisible">
+                    <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="comment_content"></el-input>
+                    <div slot="footer" class="dialog-footer">
+                      <el-button @click="changeCommentDialogVisible = false">取 消</el-button>
+                      <el-button type="primary" @click="changeCommentDialogVisible = false">确 定</el-button>
+                    </div>
+                  </el-dialog>
+                  <el-link type="primary" href='http://item.jd.com/18164614013.html' target="_blank">查看回复</el-link>
+              </el-row>
+              <el-row >
+                <el-col :span="2" v-for ="item in urls" :key="item">
+                  <el-popover
+                    placement="top-start"
+                    trigger="hover">
+                    <el-image :src="item" :fit="contain" style="max-width: 300px; max-height: 300px" />
+                    <el-image :src="item" :fit="contain" style="width: 100px; height: 100px"  slot="reference" />
+                  </el-popover>
+                  <i class="el-icon-error" title="点击删除" style="position: relative; bottom:98px; right:10px; width: 10px; height: 10px; color:red" @click="imgDelete()"></i>
+                </el-col>
+              </el-row>
+            </el-col>
+            <el-col :span="2">
+              <template>
+                <div style="margin-top: 20px">
+                  <el-radio class="center-horizontal" v-model="item.imageAuditStatus" label=1 border size="medium">通过&nbsp&nbsp&nbsp&nbsp</el-radio>
+                </div>
+                <div style="margin-top: 20px">
+                  <el-radio class="center-horizontal" v-model="item.imageAuditStatus" label=2 border size="medium">不通过</el-radio>
+                </div>
+                <div style="margin-top: 20px">
+                  <el-radio class="center-horizontal" v-model="item.imageAuditStatus" label=0 border size="medium">不处理</el-radio>
+                </div>
+              </template>
+            </el-col>
+          </el-row>  
+        </div>
+        <div style="min-height: 10px"></div>
       </div>
+      
 
       <el-form-item>
-        <el-button type="primary" @click="submitForm(items)">提交</el-button>
-        <el-button @click="resetForm(items)">重置</el-button>
+        <div style="float:right">
+          <el-button type="primary" @click="submitForm(list)">审核</el-button>
+          <el-button @click="resetForm(items)">重置</el-button>
+        </div>
       </el-form-item>
     </el-form>
 
@@ -244,10 +321,9 @@ export default {
   },
   data() {
     return {
-      radio2:'1',
+      imageAuditStatus:'1',
       changeCommentDialogVisible:false,
       bigImgDialog:false,
-      textarea:'在此处修改展示评价',
       score:4.7,
       items: [
           { type: '', label: '待审核' },
@@ -255,14 +331,17 @@ export default {
           { type: 'danger', label: '不通过' },
         ],
       urls: [
+        'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1560635595940&di=88442870c2db5e4f352c72e8a073565c&imgtype=0&src=http%3A%2F%2Fimage.uc.cn%2Fo%2Fwemedia%2Fs%2Fupload%2F2019%2FxlCJf41d76bj3a5%2F6025017828e55d8441b27d8920f240b1.png%3B%2C3%2Cjpegx%3B3%2C310x',
         'https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg',
         'https://fuss10.elemecdn.com/1/34/19aa98b1fcb2781c4fba33d850549jpeg.jpeg',
         'https://fuss10.elemecdn.com/0/6f/e35ff375812e6b0020b6b4e8f9583jpeg.jpeg',
         'https://fuss10.elemecdn.com/9/bb/e27858e973f5d7d3904835f46abbdjpeg.jpeg',
         'https://fuss10.elemecdn.com/d/e6/c4d93a3805b3ce3f323f7974e6f78jpeg.jpeg',
         'https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg',
+        'https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg',
         'https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg'
         ],
+      comment_content: '',
     
       showAll: false,
       multipleSelection: [],
@@ -494,7 +573,13 @@ export default {
     },
 
     submitForm(items){
-      console.log(items);
+      console.log(items)
+    },
+    readCommentContent(content){
+      this.comment_content=content
+    },
+    closeDialog (content) {
+      console.log(content)
     }
 
 

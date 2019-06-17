@@ -29,7 +29,10 @@ for (let i = 0; i < count; i++) {
     sku: '@integer(6000000, 9000000)',
     orderId: '@integer(4000000000, 9000000000)',
     image_uri,
-    platforms: ['a-platform']
+    platforms: ['a-platform'],
+    imageAuditStatus: '@integer(0, 2)',
+    userPin: '@first',
+    userNickName: '@first'
   }))
 }
 
