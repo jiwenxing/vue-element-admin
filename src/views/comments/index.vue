@@ -3,7 +3,7 @@
     <div class="filter-container">
       <el-form :inline="true" :model="listQuery" class="demo-form-inline" label-width="120px">
         <el-form-item label="Audit Status">
-          <el-select v-model="listQuery.auditStatus" placeholder="audit status" clearable style="width: 150px" class="filter-item">
+          <el-select v-model="listQuery.textStatus" placeholder="audit status" clearable style="width: 150px" class="filter-item">
             <el-option v-for="item in auditStatusOptions" :key="item.key" :label="item.display_name" :value="item.key" />
           </el-select>
         </el-form-item>
@@ -18,7 +18,7 @@
         </el-form-item>
         <br>
         <el-form-item label="Top Status">
-          <el-select v-model="listQuery.topStatus" placeholder="top status" clearable style="width: 150px" class="filter-item">
+          <el-select v-model="listQuery.topped" placeholder="top status" clearable style="width: 150px" class="filter-item">
             <el-option v-for="item in topStatusOptions" :key="item.key" :label="item.display_name" :value="item.key" />
           </el-select>
         </el-form-item>
@@ -84,25 +84,19 @@
               <span>{{ row.guid }}</span>
             </el-form-item>
             <el-form-item label="Order ID:">
-              <span>{{ row.orderId }}</span>
+              <span>{{ row.referenceEventId }}</span>
             </el-form-item>
             <el-form-item label="Top Status:">
-              <span>{{ row.topStatus | topStatusShowFilter }}</span>
+              <span>{{ row.topped | topStatusShowFilter }}</span>
             </el-form-item>
             <el-form-item label="User Nick Name:">
-              <span>{{ row.reviewer }}</span>
+              <span>{{ row.nickName }}</span>
             </el-form-item>
             <el-form-item label="Commodity Name:">
               <span>{{ row.commodityName }}</span>
             </el-form-item>
-            <el-form-item label="Price:">
-              <span>{{ row.forecast }}</span>
-            </el-form-item>
-            <el-form-item label="Category:">
-              <span>{{ row.category }}</span>
-            </el-form-item>
             <el-form-item label="IP:">
-              <span>{{ row.ip }}</span>
+              <span>{{ row.userIp }}</span>
             </el-form-item>
             <el-form-item label="Client Type:">
               <span>{{ row.clientType }}</span>
@@ -126,7 +120,7 @@
         <template slot-scope="{row}">
           <el-tooltip placement="top">
             <div slot="content">{{ row.commodityName }}</div>
-            <el-link icon="el-icon-link" :underline="false" type="info" :href="'https://item.jd.com/' + row.sku + '.html'" target="_blank">{{ row.sku }}</el-link>
+            <el-link icon="el-icon-link" :underline="false" type="info" :href="'https://item.jd.com/' + row.objectId + '.html'" target="_blank">{{ row.objectId }}</el-link>
           </el-tooltip>
         </template>
       </el-table-column>
@@ -148,8 +142,8 @@
       </el-table-column>
       <!-- <el-table-column label="Audit Status" class-name="status-col" min-width="110">
         <template slot-scope="{row}">
-          <el-tag :type="row.status | statusFilter">
-            {{ row.status | statusShowFilter }}
+          <el-tag :type="row.textStatus | statusFilter">
+            {{ row.textStatus | statusShowFilter }}
           </el-tag>
         </template>
       </el-table-column>
@@ -163,11 +157,11 @@
       </el-table-column> -->
       <el-table-column label="Status" class-name="status-col" width="140" align="center">
         <template slot-scope="{row}">
-          <el-tag :type="row.status | statusFilter">
-            {{ row.status | statusShowFilter }}
+          <el-tag :type="row.textStatus | statusFilter">
+            {{ row.textStatus | statusShowFilter }}
           </el-tag>
-          <el-tag v-if="row.status==1 && row.topStatus!=0" :type="row.topStatus | statusFilter" effect="plain">
-            <i :class="row.topStatus | topStatusIconFilter" />
+          <el-tag v-if="row.textStatus==1 && row.topped!=0" :type="row.topped | statusFilter" effect="plain">
+            <i :class="row.topped | topStatusIconFilter" />
             <!-- {{ row.topStatus | topStatusShowFilter }} -->
           </el-tag>
         </template>
@@ -175,30 +169,30 @@
       <el-table-column label="Comment Time" width="180px" align="center">
         <template slot-scope="scope">
           <i class="el-icon-time" />
-          <span>{{ scope.row.display_time }}</span>
+          <span>{{ scope.row.creationTime }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Actions" align="center" width="250" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-button v-if="row.status==1" plain size="mini" type="danger" @click="handleModifyAuditStatus(row, -1)">
+          <el-button v-if="row.textStatus==1" plain size="mini" type="danger" @click="handleModifyAuditStatus(row, -1)">
             Delete
           </el-button>
-          <el-button v-if="row.status==-1" plain size="mini" type="success" @click="handleModifyAuditStatus(row, 1)">
+          <el-button v-if="row.textStatus==-1" plain size="mini" type="success" @click="handleModifyAuditStatus(row, 1)">
             Pass
           </el-button>
-          <el-button v-if="row.status==0" plain size="mini" type="success" @click="handleModifyAuditStatus(row, 1)">
+          <el-button v-if="row.textStatus==0" plain size="mini" type="success" @click="handleModifyAuditStatus(row, 1)">
             Passed
           </el-button>
-          <el-button v-if="row.status==0" plain size="mini" type="danger" @click="handleModifyAuditStatus(row, -1)">
+          <el-button v-if="row.textStatus==0" plain size="mini" type="danger" @click="handleModifyAuditStatus(row, -1)">
             Delete
           </el-button>
-          <el-button v-if="(row.topStatus==0 || row.topStatus==-1) && row.status==1" plain size="mini" type="success" @click="handleModifyTopStatus(row, 1)">
+          <el-button v-if="(row.topped==0 || row.topped==-1) && row.textStatus==1" plain size="mini" type="success" @click="handleModifyTopStatus(row, 1)">
             Top
           </el-button>
-          <el-button v-if="(row.topStatus==0 || row.topStatus==1) && row.status==1" plain size="mini" type="danger" @click="handleModifyTopStatus(row, -1)">
+          <el-button v-if="(row.topped==0 || row.topped==1) && row.textStatus==1" plain size="mini" type="danger" @click="handleModifyTopStatus(row, -1)">
             Sink
           </el-button>
-          <el-button v-if="(row.status==1 && row.topStatus!=0) && row.status==1" plain size="mini" type="info" @click="handleModifyTopStatus(row, 0)">
+          <el-button v-if="(row.textStatus==1 && row.topped!=0) && row.textStatus==1" plain size="mini" type="info" @click="handleModifyTopStatus(row, 0)">
             Nomal
           </el-button>
         </template>
@@ -240,7 +234,7 @@
         <el-button @click="dialogFormVisible = false">
           cancel
         </el-button>
-        <el-button type="primary" @click="updateData">
+        <el-button type="primary" @click="updateData(row)">
           confirm
         </el-button>
       </div>
@@ -327,7 +321,7 @@ export default {
       multipleSelection: {
         commentIds: [],
         textStatus: undefined,
-        topStatus: undefined,
+        topped: undefined,
         token: ''
       },
       tableKey: 0,
@@ -337,7 +331,8 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
-        auditStatus: 0
+        textStatus: 0,
+        clientCode: 'TH'
       },
       scoreOptions: [1, 2, 3],
       auditStatusOptions,
@@ -349,7 +344,9 @@ export default {
         id: undefined,
         score: undefined,
         timestamp: new Date(),
-        status: undefined
+        status: undefined,
+        content: undefined,
+        clientCode: 'TH'
       },
       myBackToTopStyle: {
         right: '50px',
@@ -380,8 +377,8 @@ export default {
     getList() {
       this.listLoading = true
       fetchList(this.listQuery).then(response => {
-        const items = response.data.items
-        this.total = response.data.total
+        const items = response.result.list
+        this.total = response.result.total
         this.list = items.map(v => {
           this.$set(v, 'edit', false) // https://vuejs.org/v2/guide/reactivity.html
           v.originalContent = v.Content //  will be used when user click the cancel botton
@@ -399,12 +396,12 @@ export default {
       this.getList()
     },
     resetSearch() {
-      this.listQuery.auditStatus = ''
+      this.listQuery.textStatus = ''
       this.listQuery.pin = ''
       this.listQuery.sku = ''
       this.listQuery.orderId = ''
       this.listQuery.grade = ''
-      this.listQuery.topStatus = ''
+      this.listQuery.topped = ''
       this.listQuery.keyword = ''
       this.getList()
     },
@@ -425,7 +422,7 @@ export default {
         action = 'Delete'
       }
       updateAuditStatus(param).then(() => {
-        row.status = status
+        row.textStatus = status
         this.$notify({
           title: 'Success',
           message: action + ' Successfully',
@@ -445,7 +442,7 @@ export default {
         action = 'Reset'
       }
       updateTopStatus(param).then(() => {
-        row.topStatus = status
+        row.topped = status
         this.$notify({
           title: 'Success',
           message: action + ' Successfully',
@@ -490,8 +487,10 @@ export default {
       }, 1 * 1000)
     },
     handleUpdate(row) {
-      this.temp = Object.assign({}, row) // copy obj
-      this.temp.timestamp = new Date(this.temp.timestamp)
+      // this.temp = Object.assign({}, row) // copy obj
+      this.temp.content = row.content
+      this.temp.id = row.id
+      // this.temp.timestamp = new Date(this.temp.timestamp)
       this.temp.token = getToken()
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
@@ -502,17 +501,16 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          const tempData = Object.assign({}, this.temp)
-          tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          updateContent(tempData).then(() => {
-            for (const v of this.list) {
-              if (v.id === this.temp.id) {
-                const index = this.list.indexOf(v)
-                this.list.splice(index, 1, this.temp)
-                break
-              }
-            }
+          updateContent(this.temp).then(() => {
+            // for (const v of this.list) {
+            //   if (v.id === this.temp.id) {
+            //     const index = this.list.indexOf(v)
+            //     this.list.splice(index, 1, this.temp)
+            //     break
+            //   }
+            // }
             this.dialogFormVisible = false
+            this.getList()
             this.$notify({
               title: '成功',
               message: '更新成功',

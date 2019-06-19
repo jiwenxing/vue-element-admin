@@ -12,8 +12,8 @@ for (let i = 0; i < count; i++) {
     guid: '@guid',
     timestamp: +Mock.Random.date('T'),
     pin: '@first',
-    ip: '@ip',
-    reviewer: '@first',
+    userIp: '@ip',
+    nickName: '@first',
     category: '@first',
     commodityName: '@title(5, 10)',
     content_short: 'mock data',
@@ -22,12 +22,12 @@ for (let i = 0; i < count; i++) {
     score: '@integer(1, 5)',
     'type|1': ['CN', 'US', 'JP', 'EU'],
     'clientType|1': ['IOS', 'Android', 'PC', 'IPad'],
-    'status|1': [1, 0, -1],
-    'topStatus|1': [1, 0, -1],
-    display_time: '@datetime',
+    'textStatus|1': [1, 0, -1],
+    'topped|1': [1, 0, -1],
+    creationTime: '@datetime',
     comment_disabled: true,
-    sku: '@integer(6000000, 9000000)',
-    orderId: '@integer(4000000000, 9000000000)',
+    objectId: '@integer(6000000, 9000000)',
+    referenceEventId: '@integer(4000000000, 9000000000)',
     image_uri,
     platforms: ['a-platform']
   }))
@@ -36,14 +36,14 @@ for (let i = 0; i < count; i++) {
 export default [
   {
     url: '/comment/list.*',
-    type: 'get',
+    type: 'post',
     response: config => {
-      const { grade, topStatus, sku, keyword, page = 1, limit = 20, auditStatus, sort, pin } = config.query
+      const { grade, topped, sku, keyword, page = 1, limit = 20, textStatus, sort, pin } = config.query
 
       let mockList = List.filter(item => {
         if (pin && item.pin !== pin) return false
-        if (auditStatus && item.status !== Number(auditStatus)) return false
-        if (topStatus && item.topStatus !== Number(topStatus)) return false
+        if (textStatus && item.textStatus !== Number(textStatus)) return false
+        if (topped && item.topped !== Number(topped)) return false
         if (grade && item.importance !== +Number(grade)) return false
         if (sku && item.sku !== Number(sku)) return false
         if (keyword && item.content.indexOf(keyword) < 0) return false
@@ -58,9 +58,9 @@ export default [
 
       return {
         code: '1',
-        data: {
+        result: {
           total: mockList.length,
-          items: pageList
+          list: pageList
         }
       }
     }
