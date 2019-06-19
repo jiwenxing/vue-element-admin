@@ -4,10 +4,11 @@
     type="datetimerange"
     :picker-options="pickerOptions"
     range-separator="-"
-    start-placeholder="Begin"
-    end-placeholder="End"
+    start-placeholder="起始时间"
+    end-placeholder="结束时间"
     align="right"
     style="width: 435px"
+    value-format="yyyy-MM-dd HH:mm:ss"
     @change="handleChange"
   />
 </template>
@@ -18,7 +19,7 @@ export default {
     return {
       pickerOptions: {
         shortcuts: [{
-          text: 'last 1 day',
+          text: '昨天',
           onClick(picker) {
             const end = new Date()
             const start = new Date()
@@ -26,7 +27,7 @@ export default {
             picker.$emit('pick', [start, end])
           }
         }, {
-          text: 'last 1 week',
+          text: '近一周',
           onClick(picker) {
             const end = new Date()
             const start = new Date()
@@ -34,7 +35,7 @@ export default {
             picker.$emit('pick', [start, end])
           }
         }, {
-          text: 'last 1 month',
+          text: '近一月',
           onClick(picker) {
             const end = new Date()
             const start = new Date()
@@ -42,7 +43,7 @@ export default {
             picker.$emit('pick', [start, end])
           }
         }, {
-          text: 'last 3 months',
+          text: '近三月',
           onClick(picker) {
             const end = new Date()
             const start = new Date()
@@ -50,7 +51,7 @@ export default {
             picker.$emit('pick', [start, end])
           }
         }, {
-          text: 'last 6 months',
+          text: '近半年',
           onClick(picker) {
             const end = new Date()
             const start = new Date()
@@ -58,7 +59,7 @@ export default {
             picker.$emit('pick', [start, end])
           }
         }, {
-          text: 'last 1 year',
+          text: '近一年',
           onClick(picker) {
             const end = new Date()
             const start = new Date()
@@ -67,7 +68,7 @@ export default {
           }
         }]
       },
-      value: [new Date() - 3600 * 1000 * 24, new Date()]
+      value: [new Date(new Date() - 3600 * 1000 * 24), new Date()]
     }
   },
   methods: {
