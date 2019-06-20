@@ -5,6 +5,7 @@
     :show-all-levels="false"
     clearable
     style="width: 435px"
+    size="medium"
     @change="handleChange"
   />
 </template>

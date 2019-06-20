@@ -1,43 +1,112 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-form :inline="true" :model="listQuery" class="demo-form-inline" label-width="120px">
-        <el-form-item label="Audit Status">
-          <el-select v-model="listQuery.textStatus" placeholder="audit status" clearable style="width: 150px" class="filter-item">
-            <el-option v-for="item in auditStatusOptions" :key="item.key" :label="item.display_name" :value="item.key" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="User Account">
-          <el-input v-model="listQuery.pin" placeholder="pin" style="width: 150px" class="filter-item" />
-        </el-form-item>
-        <el-form-item label="Product Name">
-          <el-input v-model="listQuery.associateName" placeholder="Product Name" style="width: 435px" class="filter-item" />
-        </el-form-item>
-        <br>
-        <el-form-item label="SKU">
-          <el-input v-model="listQuery.objectId" placeholder="sku" style="width: 150px" class="filter-item" />
-        </el-form-item>
-        <el-form-item label="Order ID">
-          <el-input v-model="listQuery.referenceEventId" placeholder="order number" style="width: 150px" class="filter-item" />
-        </el-form-item>
-        <el-form-item label="Content">
-          <el-input v-model="listQuery.content" placeholder="content" style="width: 435px" class="filter-item" />
-        </el-form-item>
-        <br>
-        <el-form-item label="Top Status">
-          <el-select v-model="listQuery.topped" placeholder="top status" clearable style="width: 150px" class="filter-item">
-            <el-option v-for="item in topStatusOptions" :key="item.key" :label="item.display_name" :value="item.key" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Grade">
-          <el-select v-model="listQuery.scoreLevel" placeholder="grade" clearable style="width: 150px" class="filter-item">
-            <el-option v-for="item in gradeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Comment Time">
-          <date-time-picker @time-change="listQuery.timeRange=$event" />
-        </el-form-item>
-        <div v-if="showAll">
+      <el-form :inline="true" :model="listQuery" class="demo-form-inline">
+        <el-row :gutter="15">
+          <el-col :span="5">
+            <el-form-item>
+              <div class="el-input-group">
+                <div class="el-input-group__prepend">Audit Status</div>
+                <el-select v-model="listQuery.textStatus" placeholder="audit status" clearable class="filter-item my-select"  size="medium">
+                  <el-option v-for="item in auditStatusOptions" :key="item.key" :label="item.display_name" :value="item.key" />
+                </el-select>
+              </div>
+            </el-form-item>
+          </el-col>
+          <el-col :span="5">
+            <el-form-item>
+              <el-input v-model="listQuery.pin" placeholder="pin" class="filter-item" size="medium">
+                <template slot="prepend">User Account</template>
+              </el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="14">
+            <el-form-item>
+              <el-input v-model="listQuery.associateName" placeholder="Product Name" style="width: 450px" class="filter-item" size="medium">
+                <template slot="prepend">Product Name</template>
+              </el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="15">
+          <el-col :span="5">
+            <el-form-item>
+              <el-input v-model="listQuery.objectId" placeholder="sku" class="filter-item" size="medium">
+                <template slot="prepend">SKU</template>
+              </el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="5">
+            <el-form-item>
+              <el-input v-model="listQuery.referenceEventId" placeholder="order number" class="filter-item" size="medium">
+                <template slot="prepend">Order ID</template>
+              </el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="14">
+            <el-form-item>
+              <el-input v-model="listQuery.content" placeholder="content" style="width: 450px" class="filter-item" size="medium">
+                <template slot="prepend">Content</template>
+              </el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="15">
+          <el-col :span="5">
+            <el-form-item>
+              <div class="el-input-group">
+                <div class="el-input-group__prepend">Top Status</div>
+                <el-select v-model="listQuery.topped" placeholder="top status" clearable class="filter-item my-select" size="medium">
+                  <el-option v-for="item in topStatusOptions" :key="item.key" :label="item.display_name" :value="item.key" />
+                </el-select>
+              </div>
+            </el-form-item>
+          </el-col>
+          <el-col :span="5">
+            <el-form-item>
+              <div class="el-input-group">
+                <div class="el-input-group__prepend">Grade</div>
+                 <el-select v-model="listQuery.scoreLevel" placeholder="grade" clearable class="filter-item my-select" size="medium">
+                   <el-option v-for="item in gradeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
+                 </el-select>
+              </div>
+            </el-form-item>
+          </el-col>
+          <el-col :span="14">
+            <el-form-item>
+              <date-time-picker @time-change="listQuery.timeRange=$event" style="width: 450px; height:36px" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="15">
+          <el-col :span="5">
+            <el-form-item>
+              <el-input v-model="listQuery.nickName" placeholder="nick name" class="filter-item" size="medium">
+                <template slot="prepend">Nick Name</template>
+              </el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="5">
+            <el-form-item>
+              <div class="el-input-group">
+                <div class="el-input-group__prepend">Share Status</div>
+                 <el-select v-model="listQuery.shareOrderStatus" placeholder="share status" clearable class="filter-item my-select" size="medium">
+                   <el-option v-for="item in shareStatusOptions" :key="item.key" :label="item.display_name" :value="item.key" />
+                 </el-select>
+              </div>
+            </el-form-item>
+          </el-col>
+          <el-col :span="14">
+            <el-form-item>
+              <div class="el-input-group">
+                <div class="el-input-group__prepend">Category</div>
+                  <category @cate-change="listQuery.category=$event" style="width: 325px; height:36px" />
+              </div>
+            </el-form-item>
+          </el-col>
+        </el-row>
+          
+        <!-- <div v-if="showAll">
           <el-form-item label="Nick Name">
             <el-input v-model="listQuery.nickName" placeholder="nick name" style="width: 150px" class="filter-item" />
           </el-form-item>
@@ -54,7 +123,7 @@
           <i :class="[showAll ? 'el-icon-caret-top' : 'el-icon-caret-bottom']" />
           <span v-if="showAll" class="tips">hide extra filter options</span>
           <span v-else class="tips">show more filter options</span>
-        </div>
+        </div> -->
         <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
           Search
         </el-button>
@@ -323,7 +392,7 @@ export default {
   },
   data() {
     return {
-      showAll: false,
+      showAll: true,
       multipleSelection: {
         commentIds: [],
         textStatus: undefined,
@@ -603,5 +672,13 @@ export default {
   color:#409eff;
   background-color:#f9fafc
 }
-
+/* https://panjiachen.gitee.io/vue-element-admin-site/zh/guide/essentials/style.html#%E7%88%B6%E7%BB%84%E4%BB%B6%E6%94%B9%E5%8F%98%E5%AD%90%E7%BB%84%E4%BB%B6%E6%A0%B7%E5%BC%8F-%E6%B7%B1%E5%BA%A6%E9%80%89%E6%8B%A9%E5%99%A8 */
+.demo-form-inline >>> .el-input-group__prepend { 
+  width: 125px;
+  text-align: center;
+}
+.my-select {
+  width: 185px;
+  text-align: center;
+}
 </style>
