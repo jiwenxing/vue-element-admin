@@ -2,6 +2,7 @@
   <el-cascader
     placeholder="category"
     :props="cate"
+    :show-all-levels="false"
     clearable
     style="width: 435px"
     @change="handleChange"
@@ -9,6 +10,7 @@
 </template>
 
 <script>
+import { fetchList } from '@/api/common'
 let id = 0
 
 export default {
@@ -19,17 +21,35 @@ export default {
         checkStrictly: true,
         lazy: true,
         lazyLoad(node, resolve) {
-          const { level } = node
-          setTimeout(() => {
-            const nodes = Array.from({ length: level + 1 })
+          const { level, value } = node
+          const pid = value
+          const params = { level, pid }
+          console.log(node)
+          console.log(params)
+          fetchList(params).then(response => {
+            const items = response.data
+            const nodes = items
               .map(item => ({
-                value: ++id,
-                label: `cate${id}`,
+                value: item.productSortId,
+                label: item.name,
                 leaf: level >= 2
               }))
+            console.log(nodes)
             // 通过调用resolve将子节点数据返回，通知组件数据加载完成
             resolve(nodes)
-          }, 1000)
+          })
+
+          // setTimeout(() => {
+          //   const nodes = Array.from({ length: level + 1 })
+          //     .map(item => ({
+          //       value: ++id,
+          //       label: `cate${id}`,
+          //       leaf: level >= 2
+          //     }))
+          //   console.log(nodes)
+          //   // 通过调用resolve将子节点数据返回，通知组件数据加载完成
+          //   resolve(nodes)
+          // }, 1000)
         }
       }
     }

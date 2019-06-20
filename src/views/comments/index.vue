@@ -8,13 +8,20 @@
           </el-select>
         </el-form-item>
         <el-form-item label="User Account">
-          <el-input v-model="listQuery.pin" placeholder="pin" style="width: 150px" class="filter-item" @keyup.enter.native="handleFilter" />
+          <el-input v-model="listQuery.pin" placeholder="pin" style="width: 150px" class="filter-item" />
         </el-form-item>
+        <el-form-item label="Product Name">
+          <el-input v-model="listQuery.associateName" placeholder="Product Name" style="width: 435px" class="filter-item" />
+        </el-form-item>
+        <br>
         <el-form-item label="SKU">
-          <el-input v-model="listQuery.sku" placeholder="commodity number" style="width: 150px" class="filter-item" @keyup.enter.native="handleFilter" />
+          <el-input v-model="listQuery.objectId" placeholder="sku" style="width: 150px" class="filter-item" />
         </el-form-item>
         <el-form-item label="Order ID">
-          <el-input v-model="listQuery.orderId" placeholder="order number" style="width: 150px" class="filter-item" @keyup.enter.native="handleFilter" />
+          <el-input v-model="listQuery.referenceEventId" placeholder="order number" style="width: 150px" class="filter-item" />
+        </el-form-item>
+        <el-form-item label="Content">
+          <el-input v-model="listQuery.content" placeholder="content" style="width: 435px" class="filter-item" />
         </el-form-item>
         <br>
         <el-form-item label="Top Status">
@@ -23,23 +30,19 @@
           </el-select>
         </el-form-item>
         <el-form-item label="Grade">
-          <el-select v-model="listQuery.grade" placeholder="grade" clearable style="width: 150px" class="filter-item">
+          <el-select v-model="listQuery.scoreLevel" placeholder="grade" clearable style="width: 150px" class="filter-item">
             <el-option v-for="item in gradeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
           </el-select>
         </el-form-item>
-        <el-form-item label="Keyword">
-          <el-input v-model="listQuery.keyword" placeholder="keyword" style="width: 435px" class="filter-item" @keyup.enter.native="handleFilter" />
-        </el-form-item>
-        <br>
         <el-form-item label="Comment Time">
           <date-time-picker @time-change="listQuery.timeRange=$event" />
         </el-form-item>
         <div v-if="showAll">
           <el-form-item label="Nick Name">
-            <el-input v-model="listQuery.orderId" placeholder="nick name" style="width: 150px" class="filter-item" @keyup.enter.native="handleFilter" />
+            <el-input v-model="listQuery.nickName" placeholder="nick name" style="width: 150px" class="filter-item" />
           </el-form-item>
           <el-form-item label="Share Status">
-            <el-select v-model="listQuery.shareStatus" placeholder="share status" clearable style="width: 150px" class="filter-item">
+            <el-select v-model="listQuery.shareOrderStatus" placeholder="share status" clearable style="width: 150px" class="filter-item">
               <el-option v-for="item in shareStatusOptions" :key="item.key" :label="item.display_name" :value="item.key" />
             </el-select>
           </el-form-item>
@@ -174,25 +177,25 @@
       </el-table-column>
       <el-table-column label="Actions" align="center" width="250" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-button v-if="row.textStatus==1" plain size="mini" type="danger" @click="handleModifyAuditStatus(row, -1)">
+          <el-button v-if="row.textStatus===1" plain size="mini" type="danger" @click="handleModifyAuditStatus(row, -1)">
             Delete
           </el-button>
-          <el-button v-if="row.textStatus==-1" plain size="mini" type="success" @click="handleModifyAuditStatus(row, 1)">
+          <el-button v-if="row.textStatus===-1" plain size="mini" type="success" @click="handleModifyAuditStatus(row, 1)">
             Pass
           </el-button>
-          <el-button v-if="row.textStatus==0" plain size="mini" type="success" @click="handleModifyAuditStatus(row, 1)">
+          <el-button v-if="row.textStatus===2" plain size="mini" type="success" @click="handleModifyAuditStatus(row, 1)">
             Passed
           </el-button>
-          <el-button v-if="row.textStatus==0" plain size="mini" type="danger" @click="handleModifyAuditStatus(row, -1)">
+          <el-button v-if="row.textStatus===2" plain size="mini" type="danger" @click="handleModifyAuditStatus(row, -1)">
             Delete
           </el-button>
-          <el-button v-if="(row.topped==0 || row.topped==-1) && row.textStatus==1" plain size="mini" type="success" @click="handleModifyTopStatus(row, 1)">
+          <el-button v-if="(row.topped===0 || row.topped===-1) && row.textStatus===1" plain size="mini" type="success" @click="handleModifyTopStatus(row, 1)">
             Top
           </el-button>
-          <el-button v-if="(row.topped==0 || row.topped==1) && row.textStatus==1" plain size="mini" type="danger" @click="handleModifyTopStatus(row, -1)">
+          <el-button v-if="(row.topped===0 || row.topped===1) && row.textStatus===1" plain size="mini" type="danger" @click="handleModifyTopStatus(row, -1)">
             Sink
           </el-button>
-          <el-button v-if="(row.textStatus==1 && row.topped!=0) && row.textStatus==1" plain size="mini" type="info" @click="handleModifyTopStatus(row, 0)">
+          <el-button v-if="(row.textStatus===1 && row.topped!=0) && row.textStatus===1" plain size="mini" type="info" @click="handleModifyTopStatus(row, 0)">
             Nomal
           </el-button>
         </template>
@@ -260,7 +263,8 @@ import BackToTop from '@/components/BackToTop'
 const auditStatusOptions = [
   { key: 1, display_name: 'Passed' },
   { key: -1, display_name: 'Deleted' },
-  { key: 0, display_name: 'Auditing' }
+  { key: 2, display_name: 'Auditing' },
+  { key: 0, display_name: 'None' }
 ]
 
 const gradeOptions = [
@@ -285,6 +289,7 @@ export default {
     statusFilter(status) {
       const statusMap = {
         '1': 'success',
+        '2': 'info',
         '0': 'info',
         '-1': 'danger'
       }
@@ -293,8 +298,9 @@ export default {
     statusShowFilter(status) {
       const statusMap = {
         '1': 'Passed',
-        '0': 'Auditing',
-        '-1': 'Deleted'
+        '2': 'Auditing',
+        '-1': 'Deleted',
+        '0': 'None'
       }
       return statusMap[status]
     },
@@ -322,7 +328,8 @@ export default {
         commentIds: [],
         textStatus: undefined,
         topped: undefined,
-        token: ''
+        token: '',
+        clientCode: 'TH'
       },
       tableKey: 0,
       list: null,
@@ -331,7 +338,7 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
-        textStatus: 0,
+        textStatus: 2,
         clientCode: 'TH'
       },
       scoreOptions: [1, 2, 3],
@@ -377,18 +384,23 @@ export default {
     getList() {
       this.listLoading = true
       fetchList(this.listQuery).then(response => {
-        const items = response.result.list
-        this.total = response.result.total
-        this.list = items.map(v => {
-          this.$set(v, 'edit', false) // https://vuejs.org/v2/guide/reactivity.html
-          v.originalContent = v.Content //  will be used when user click the cancel botton
-          return v
-        })
-
+        if (response.result) {
+          const items = response.result.list
+          this.total = response.result.total
+          this.list = items.map(v => {
+            this.$set(v, 'edit', false) // https://vuejs.org/v2/guide/reactivity.html
+            v.originalContent = v.Content //  will be used when user click the cancel botton
+            return v
+          })
+        } else {
+          this.list = []
+          this.total = 0
+        }
+        this.listLoading = false
         // Just to simulate the time of the request
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
+        // setTimeout(() => {
+        //   this.listLoading = false
+        // }, 1.5 * 1000)
       })
     },
     handleFilter() {
@@ -396,13 +408,15 @@ export default {
       this.getList()
     },
     resetSearch() {
-      this.listQuery.textStatus = ''
-      this.listQuery.pin = ''
-      this.listQuery.sku = ''
-      this.listQuery.orderId = ''
-      this.listQuery.grade = ''
-      this.listQuery.topped = ''
-      this.listQuery.keyword = ''
+      this.listQuery.textStatus = undefined
+      this.listQuery.pin = undefined
+      this.listQuery.objectId = undefined
+      this.listQuery.referenceEventId = undefined
+      this.listQuery.scoreLevel = undefined
+      this.listQuery.topped = undefined
+      this.listQuery.content = undefined
+      this.listQuery.nickName = undefined
+      this.listQuery.shareOrderStatus = undefined
       this.getList()
     },
     tableRowClassName({ row, rowIndex }) {
@@ -416,7 +430,7 @@ export default {
     handleModifyAuditStatus(row, status) {
       const param = Object.assign({}, this.temp)
       param.id = row.id
-      param.status = status
+      param.textStatus = status
       let action = 'Pass'
       if (status === -1) {
         action = 'Delete'
@@ -434,7 +448,7 @@ export default {
     handleModifyTopStatus(row, status) {
       const param = Object.assign({}, this.temp)
       param.id = row.id
-      param.status = status
+      param.topped = status
       let action = 'Top'
       if (status === -1) {
         action = 'Sink'
@@ -466,25 +480,38 @@ export default {
       const selectedIds = this.multipleSelection.commentIds
       this.multipleSelection.textStatus = status
       this.multipleSelection.token = getToken()
-      setTimeout(() => {
-        batchAuditSelected(this.multipleSelection).then(() => {
-          this.list.forEach(function(item, index, arr) {
-            const hit = selectedIds.findIndex(function(value, index, arr) {
-              return value === item.id
-            }) > -1
-            if (hit) {
-              item.status = status
-            }
-          })
-        })
-        this.listLoading = false
-        this.$notify({
-          title: 'Success',
-          message: 'All Selected Comments Audited',
-          type: 'success',
-          duration: 2000
-        })
-      }, 1 * 1000)
+      batchAuditSelected(this.multipleSelection).then(() => {
+        setTimeout(() => {
+          this.getList()
+        }, 1 * 1000)
+      })
+      this.listLoading = false
+      this.$notify({
+        title: 'Success',
+        message: 'All Selected Comments Audited',
+        type: 'success',
+        duration: 2000
+      })
+      // setTimeout(() => {
+      //   batchAuditSelected(this.multipleSelection).then(() => {
+      //     this.list.forEach(function(item, index, arr) {
+      //       const hit = selectedIds.findIndex(function(value, index, arr) {
+      //         return value === item.id
+      //       }) > -1
+      //       if (hit) {
+      //         item.textStatus = status
+      //       }
+      //     })
+      //     this.getList()
+      //   })
+      //   this.listLoading = false
+      //   this.$notify({
+      //     title: 'Success',
+      //     message: 'All Selected Comments Audited',
+      //     type: 'success',
+      //     duration: 2000
+      //   })
+      // }, 1 * 1000)
     },
     handleUpdate(row) {
       // this.temp = Object.assign({}, row) // copy obj
