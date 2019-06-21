@@ -15,6 +15,7 @@
 
 <script>
 export default {
+  props: ['dateValue'],
   data() {
     return {
       pickerOptions: {
@@ -69,6 +70,13 @@ export default {
         }]
       },
       value: [new Date(new Date() - 3600 * 1000 * 24), new Date()]
+    }
+  },
+  watch: {
+    dateValue () {
+      if(this.dateValue) {
+        this.value = this.dateValue
+      }
     }
   },
   methods: {
