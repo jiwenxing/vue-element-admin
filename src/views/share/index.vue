@@ -64,23 +64,25 @@
     <pagination v-show="total>=10" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" style="padding: 20px 0 5px" @pagination="getList" />
     <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
     <div style="margin: 15px 0;"></div>
+
     <el-form ref="form" :model="items" label-width="80px">
       <div v-for ="item in list" :key="item">
         <div class="well">
           <el-row>
-            <el-col :span="22">
+            <el-col :span="21">
               <el-row style="margin-bottom: 5px;">
                 <el-col :span="5">
                   <div class="grid-content">
-                    <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
-                      <el-checkbox v-for="city in cities" :label="city" :key="city"></el-checkbox>
+                    <el-checkbox-group v-model="checkedList" @change="handleCheckedChange">
+                      <el-checkbox :label="item.id">
+                        <el-tag size="small" :type="item.imageAuditStatus | statusFilter" effect="dark">
+                          {{ item.imageAuditStatus | statusShowFilter }}
+                        </el-tag>
+                      </el-checkbox>
                     </el-checkbox-group>
-                    <span>审核状态：</span>
+                    <!-- <span>审核状态：</span>
                     <el-tag size="small" :type="item.imageAuditStatus | statusFilter" effect="dark">
                       {{ item.imageAuditStatus | statusShowFilter }}
-                    </el-tag>
-                    <!-- <el-tag v-if="row.status==1 && row.topStatus!=0" :type="row.topStatus | statusFilter" effect="plain">
-                      <i :class="row.topStatus | topStatusIconFilter" />
                     </el-tag> -->
                   </div>
                 </el-col>
@@ -155,7 +157,7 @@
 
       <el-form-item>
         <div style="float:right">
-          <el-button type="primary" @click="submitForm(list)">审核</el-button>
+          <el-button type="primary" @click="submitForm()">审核</el-button>
           <el-button @click="resetForm(items)">重置</el-button>
         </div>
       </el-form-item>
@@ -269,7 +271,11 @@ export default {
         'https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg',
         'https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg',
         'https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg'
-        ],
+      ],
+      checkAll: false,
+      isIndeterminate: true,
+      checkedList: [],
+
       comment_content: '',
       myBackToTopStyle: {
         right: '50px',
@@ -501,17 +507,32 @@ export default {
       alert('确定删除图片吗？')
     },
 
-    submitForm(items){
-      console.log(items)
+    submitForm(){
+      console.log(this.checkedList)
     },
     readCommentContent(content){
       this.comment_content=content
     },
     closeDialog (content) {
       console.log(content)
+    },
+    handleCheckAllChange(val) {
+      if(val){
+        let allCheckedList = [];
+        for(let i=0;i<this.list.length;i++){
+          allCheckedList.push(this.list[i].id);
+        }
+        this.checkedList = allCheckedList;
+      }else{
+        this.checkedList = [];
+      }
+      this.isIndeterminate = false;
+    },
+    handleCheckedChange(value) {
+      let checkedCount = value.length;
+      this.checkAll = checkedCount === this.list.length;
+      this.isIndeterminate = checkedCount > 0 && checkedCount < this.list.length;
     }
-
-
   }
 }
 </script>
