@@ -68,7 +68,7 @@ export default {
           }
         }]
       },
-      value: [new Date() - 3600 * 1000 * 24, new Date()]
+      value: [new Date() - 3600 * 1000 * 24 * 7, new Date()]
     }
   },
   watch: {

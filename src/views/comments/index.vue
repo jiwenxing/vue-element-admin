@@ -408,10 +408,10 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
-        textStatus: 2,
+        // textStatus: 2,
         clientCode: 'TH'
       },
-      timeRange: [new Date(new Date() - 3600 * 1000 * 24), new Date()],
+      timeRange: [new Date(new Date() - 3600 * 1000 * 24 * 7), new Date()],
       scoreOptions: [1, 2, 3],
       auditStatusOptions,
       gradeOptions,
@@ -457,6 +457,9 @@ export default {
       if (this.timeRange) {
         this.listQuery.commentStartDate = this.timeRange[0]
         this.listQuery.commentEndDate = this.timeRange[1]
+      } else {
+        this.listQuery.commentStartDate = ''
+        this.listQuery.commentEndDate = ''
       }
       fetchList(this.listQuery).then(response => {
         if (response.result) {
@@ -492,7 +495,7 @@ export default {
       this.listQuery.content = undefined
       this.listQuery.nickName = undefined
       this.listQuery.shareOrderStatus = undefined
-      this.timeRange = [new Date(new Date() - 3600 * 1000 * 24), new Date()]
+      this.timeRange = [new Date(new Date() - 3600 * 1000 * 24 * 7), new Date()]
       this.getList()
     },
     tableRowClassName({ row, rowIndex }) {
