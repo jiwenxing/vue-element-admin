@@ -56,7 +56,7 @@
       </el-table-column>
       <el-table-column label="举报次数" min-width="45px" align="center">
         <template slot-scope="{row}">
-          <el-button type="text" @click="openReportInfoList(row)">{{ row.reportCount }}</el-button>
+          <el-button type="text" @click="openReportInfoList(row)">{{ row.reportInfoList.length }}</el-button>
         </template>
       </el-table-column>
       <el-table-column label="评价内容" min-width="265px">
