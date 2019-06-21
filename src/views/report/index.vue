@@ -159,22 +159,16 @@
 </template>
 
 <script>
-import { fetchPv, createArticle } from '@/api/article'
 import { queryReportList, queryReasonList, deleteComment } from '@/api/report'
 import waves from '@/directive/waves' // waves directive
-import { getToken } from '@/utils/auth' // get token from cookie
-// import { parseTime } from '@/utils/index'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
-import Category from '@/components/Category'
 import DateTimePicker from '@/components/DateTimePicker'
-import ElFormItem from "../../../node_modules/element-ui/packages/form/src/form-item";
+import ElFormItem from '../../../node_modules/element-ui/packages/form/src/form-item';
 import { parseTime } from '@/utils/index'
 
 export default {
   name: 'ComplexTable',
-  components: {
-    ElFormItem,
-    Pagination, Category, DateTimePicker },
+  components: { ElFormItem, Pagination, DateTimePicker },
   directives: { waves },
   filters: {
     contentFilter(content) {
@@ -230,7 +224,7 @@ export default {
   methods: {
     getReasonList() {
       queryReasonList().then(response => {
-        if(response.code == 0) {
+        if (response.code === 0) {
           this.reasonMap = response.reasonMap
         } else {
           this.$notify({
@@ -245,7 +239,7 @@ export default {
     getList() {
       this.listLoading = true
       queryReportList(this.param).then(response => {
-        if(response.code == 0) {
+        if (response.code === 0) {
           this.list = response.reportCommentList
           this.totalCount = response.totalCount
         } else {
@@ -290,21 +284,24 @@ export default {
       return ''
     },
     deleteComment(row, status) {
-      const deleteParam = {id: id}
+      const deleteParam = { id: row.id }
       deleteComment(deleteParam).then(response => {
-        const code = response.reportCommentList
-        this.totalCount = response.totalCount
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
+        if (response.code === 0) {
+          this.$notify({
+            title: '成功',
+            message: '删除成功',
+            type: 'error',
+            duration: 2000
+          })
+        } else {
+          this.$notify({
+            title: '错误',
+            message: '删除出错，错误码：' + response.code,
+            type: 'error',
+            duration: 2000
+          })
+        }
       })
-      this.$notify({
-        title: '成功',
-        message: '删除成功',
-        type: 'success',
-        duration: 2000
-      })
-      row.status = status
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
