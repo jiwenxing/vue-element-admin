@@ -411,7 +411,7 @@ export default {
         textStatus: 2,
         clientCode: 'TH'
       },
-      timeRange: [new Date() - 3600 * 1000 * 24, new Date()],
+      timeRange: [new Date(new Date() - 3600 * 1000 * 24), new Date()],
       scoreOptions: [1, 2, 3],
       auditStatusOptions,
       gradeOptions,
@@ -492,7 +492,7 @@ export default {
       this.listQuery.content = undefined
       this.listQuery.nickName = undefined
       this.listQuery.shareOrderStatus = undefined
-      this.timeRange = [new Date() - 3600 * 1000 * 24, new Date()]
+      this.timeRange = [new Date(new Date() - 3600 * 1000 * 24), new Date()]
       this.getList()
     },
     tableRowClassName({ row, rowIndex }) {
