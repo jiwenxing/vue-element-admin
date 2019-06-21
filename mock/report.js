@@ -11,7 +11,8 @@ for (let i = 0; i < totalCount; i++) {
   const reportComment = Mock.mock({
     id: '@increment',
     guid: '@guid',
-    sku: '@integer(6000000, 9000000)',
+    orderId: '@integer(9000000000, 9900000000)',
+    skuId: '@integer(6000000, 9000000)',
     skuName: '@cword(5)',
     pin: '@first',
     reportCount: '@integer(1, 7)',
@@ -23,6 +24,7 @@ for (let i = 0; i < totalCount; i++) {
     timestamp: +Mock.Random.date('T'),
     display_time: '@datetime',
     comment_disabled: true,
+    clientCode: 'CN',
     imageList: '@pick(' + JSON.stringify(['@image', '@image', '@image', '@image', '@image', '@image']) + ', 0, 6)',
     platforms: ['a-platform']
   })
@@ -83,6 +85,15 @@ export default [
       return {
         code: 0,
         reasonMap: reasonMap
+      }
+    }
+  },
+  {
+    url: '/report/deleteComment.*',
+    type: 'post',
+    response: config => {
+      return {
+        code: 0
       }
     }
   }
