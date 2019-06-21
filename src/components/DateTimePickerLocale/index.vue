@@ -4,11 +4,10 @@
     type="datetimerange"
     :picker-options="pickerOptions"
     range-separator="-"
-    start-placeholder="起始时间"
-    end-placeholder="结束时间"
+    start-placeholder="Begin"
+    end-placeholder="End"
     align="right"
     style="width: 435px"
-    value-format="yyyy-MM-dd HH:mm:ss"
     @change="handleChange"
   />
 </template>
@@ -20,7 +19,7 @@ export default {
     return {
       pickerOptions: {
         shortcuts: [{
-          text: '昨天',
+          text: 'Last Day',
           onClick(picker) {
             const end = new Date()
             const start = new Date()
@@ -28,7 +27,7 @@ export default {
             picker.$emit('pick', [start, end])
           }
         }, {
-          text: '近一周',
+          text: 'Last Week',
           onClick(picker) {
             const end = new Date()
             const start = new Date()
@@ -36,7 +35,7 @@ export default {
             picker.$emit('pick', [start, end])
           }
         }, {
-          text: '近一月',
+          text: 'Last Month',
           onClick(picker) {
             const end = new Date()
             const start = new Date()
@@ -44,7 +43,7 @@ export default {
             picker.$emit('pick', [start, end])
           }
         }, {
-          text: '近三月',
+          text: 'Last 3 Months',
           onClick(picker) {
             const end = new Date()
             const start = new Date()
@@ -52,7 +51,7 @@ export default {
             picker.$emit('pick', [start, end])
           }
         }, {
-          text: '近半年',
+          text: 'Last 6 Months',
           onClick(picker) {
             const end = new Date()
             const start = new Date()
@@ -60,7 +59,7 @@ export default {
             picker.$emit('pick', [start, end])
           }
         }, {
-          text: '近一年',
+          text: 'Last 1 Year',
           onClick(picker) {
             const end = new Date()
             const start = new Date()
@@ -69,7 +68,7 @@ export default {
           }
         }]
       },
-      value: [new Date(new Date() - 3600 * 1000 * 24), new Date()]
+      value: [new Date() - 3600 * 1000 * 24, new Date()]
     }
   },
   watch: {

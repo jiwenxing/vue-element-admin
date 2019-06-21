@@ -7,7 +7,7 @@
             <el-form-item>
               <div class="el-input-group">
                 <div class="el-input-group__prepend">Audit Status</div>
-                <el-select v-model="listQuery.textStatus" placeholder="audit status" clearable class="filter-item my-select"  size="medium">
+                <el-select v-model="listQuery.textStatus" placeholder="audit status" clearable class="filter-item my-select" size="medium">
                   <el-option v-for="item in auditStatusOptions" :key="item.key" :label="item.display_name" :value="item.key" />
                 </el-select>
               </div>
@@ -66,15 +66,16 @@
             <el-form-item>
               <div class="el-input-group">
                 <div class="el-input-group__prepend">Grade</div>
-                 <el-select v-model="listQuery.scoreLevel" placeholder="grade" clearable class="filter-item my-select" size="medium">
-                   <el-option v-for="item in gradeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
-                 </el-select>
+                <el-select v-model="listQuery.scoreLevel" placeholder="grade" clearable class="filter-item my-select" size="medium">
+                  <el-option v-for="item in gradeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
+                </el-select>
               </div>
             </el-form-item>
           </el-col>
           <el-col :span="14">
             <el-form-item>
-              <date-time-picker @time-change="listQuery.timeRange=$event" style="width: 450px; height:36px" />
+              <!-- <date-time-picker @time-change="listQuery.timeRange=$event" style="width: 450px; height:36px" /> -->
+              <date-time-picker :date-value.sync="timeRange" style="width: 450px; height:36px" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -90,9 +91,9 @@
             <el-form-item>
               <div class="el-input-group">
                 <div class="el-input-group__prepend">Share Status</div>
-                 <el-select v-model="listQuery.shareOrderStatus" placeholder="share status" clearable class="filter-item my-select" size="medium">
-                   <el-option v-for="item in shareStatusOptions" :key="item.key" :label="item.display_name" :value="item.key" />
-                 </el-select>
+                <el-select v-model="listQuery.shareOrderStatus" placeholder="share status" clearable class="filter-item my-select" size="medium">
+                  <el-option v-for="item in shareStatusOptions" :key="item.key" :label="item.display_name" :value="item.key" />
+                </el-select>
               </div>
             </el-form-item>
           </el-col>
@@ -100,12 +101,12 @@
             <el-form-item>
               <div class="el-input-group">
                 <div class="el-input-group__prepend">Category</div>
-                  <category @cate-change="listQuery.category=$event" style="width: 325px; height:36px" />
+                <category style="width: 325px; height:36px" @cate-change="listQuery.categoryIds=$event" />
               </div>
             </el-form-item>
           </el-col>
         </el-row>
-          
+
         <!-- <div v-if="showAll">
           <el-form-item label="Nick Name">
             <el-input v-model="listQuery.nickName" placeholder="nick name" style="width: 150px" class="filter-item" />
@@ -323,11 +324,11 @@
 import { fetchList, updateContent, batchAuditSelected, updateAuditStatus, updateTopStatus } from '@/api/comment'
 import waves from '@/directive/waves' // waves directive
 import { getToken } from '@/utils/auth' // get token from cookie
-// import { parseTime } from '@/utils/index'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import Category from '@/components/Category'
-import DateTimePicker from '@/components/DateTimePicker'
+import DateTimePicker from '@/components/DateTimePickerLocale'
 import BackToTop from '@/components/BackToTop'
+import { parseTime } from '@/utils/index'
 
 const auditStatusOptions = [
   { key: 1, display_name: 'Passed' },
@@ -410,6 +411,7 @@ export default {
         textStatus: 2,
         clientCode: 'TH'
       },
+      timeRange: [new Date() - 3600 * 1000 * 24, new Date()],
       scoreOptions: [1, 2, 3],
       auditStatusOptions,
       gradeOptions,
@@ -452,6 +454,10 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
+      if (this.timeRange) {
+        this.listQuery.commentStartDate = this.timeRange[0]
+        this.listQuery.commentEndDate = this.timeRange[1]
+      }
       fetchList(this.listQuery).then(response => {
         if (response.result) {
           const items = response.result.list
@@ -486,6 +492,7 @@ export default {
       this.listQuery.content = undefined
       this.listQuery.nickName = undefined
       this.listQuery.shareOrderStatus = undefined
+      this.timeRange = [new Date() - 3600 * 1000 * 24, new Date()]
       this.getList()
     },
     tableRowClassName({ row, rowIndex }) {
@@ -673,7 +680,7 @@ export default {
   background-color:#f9fafc
 }
 /* https://panjiachen.gitee.io/vue-element-admin-site/zh/guide/essentials/style.html#%E7%88%B6%E7%BB%84%E4%BB%B6%E6%94%B9%E5%8F%98%E5%AD%90%E7%BB%84%E4%BB%B6%E6%A0%B7%E5%BC%8F-%E6%B7%B1%E5%BA%A6%E9%80%89%E6%8B%A9%E5%99%A8 */
-.demo-form-inline >>> .el-input-group__prepend { 
+.demo-form-inline >>> .el-input-group__prepend {
   width: 125px;
   text-align: center;
 }

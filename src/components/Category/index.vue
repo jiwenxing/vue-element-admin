@@ -12,7 +12,7 @@
 
 <script>
 import { fetchList } from '@/api/common'
-let id = 0
+const id = 0
 
 export default {
   name: 'Category',
@@ -23,12 +23,12 @@ export default {
         lazy: true,
         lazyLoad(node, resolve) {
           const { level, value } = node
-          const pid = value
-          const params = { level, pid }
+          const fid = value
+          const params = { level, fid }
           console.log(node)
           console.log(params)
           fetchList(params).then(response => {
-            const items = response.data
+            const items = response.result
             const nodes = items
               .map(item => ({
                 value: item.productSortId,
@@ -73,8 +73,14 @@ export default {
       }
     },
     handleChange(val) {
-      this.$emit('cate-change', val)
-      console.log('val = ' + val) // like 1,3,6 or 1,2
+      // console.log('val = ' + val) // like 1,3,6 or 1,2
+      // console.log(typeof  val) // like 1,3,6 or 1,2
+      // console.log(JSON.stringify(val)) // like 1,3,6 or 1,2
+      console.log(Array.from(val).join(',')) // like 1,3,6 or 1,2
+      // if (val) {
+      //   console.log(new Array(val))
+      // }
+      this.$emit('cate-change', Array.from(val).join(','))
     //   this.multipleSelection = val
     }
   }

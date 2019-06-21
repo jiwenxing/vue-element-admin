@@ -12,7 +12,7 @@ export default [
         }))
       return {
         code: '1',
-        data: nodes
+        result: nodes
       }
     }
   }
