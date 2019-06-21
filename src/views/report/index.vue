@@ -51,7 +51,7 @@
       </el-table-column>
       <el-table-column label="评价人" min-width="85px" align="center">
         <template slot-scope="{row}">
-          <span ref="reportInfoList" @click="reportInfoDialog = true">{{ row.pin }}</span>
+          <span ref="reportInfoList">{{ row.pin }}</span>
         </template>
       </el-table-column>
       <el-table-column label="举报次数" min-width="45px" align="center">
