@@ -9,7 +9,7 @@
             <el-option v-for="(itemValue, itemKey) in reportStatus" :key="itemKey" :label="itemValue" :value="itemKey" />
           </el-select>
         </el-form-item>
-        <el-input v-model="param.skuId" placeholder="商品编号" style="width: 200px" class="filter-item bottom-space">
+        <el-input v-model="param.sku" placeholder="商品编号" style="width: 200px" class="filter-item bottom-space">
           <template slot="prepend">商品编号:</template>
         </el-input>
         <el-input v-model="param.pin" placeholder="举报人" style="width: 200px" class="filter-item bottom-space">
@@ -20,7 +20,7 @@
         </el-input>
         <el-form-item>
           <span class="el-input-group__append formLabel">举报时间</span>
-          <date-time-picker @time-change="param.timeRange=$event"/>
+          <date-time-picker :dateValue.sync="timeRange" />
         </el-form-item>
         <br />
         <el-button v-waves class="filter-item bottom-space" type="primary" icon="el-icon-search" @click="handleFilter">
@@ -62,7 +62,7 @@
       <el-table-column label="评价内容" min-width="265px">
         <template slot-scope="{row}">
           <span>{{ row.content }}</span><br/>
-          <span v-for=" image in row.imageList">
+          <span v-for="image in row.imageList">
             <el-popover placement="right" title="" trigger="hover">
               <img :src="image"/>
               <img slot="reference" :src="image" style="width:96px; height:128px;margin-right: 5px">
@@ -123,7 +123,7 @@
         <el-table-column label="内容" min-width="200px">
           <template slot-scope="{row}">
             <span>{{ row.content }}</span><br/>
-            <span v-for=" image in row.imageList">
+            <span v-for="image in row.pictureList">
             <el-popover
               placement="right"
               title=""
@@ -168,6 +168,7 @@ import Pagination from '@/components/Pagination' // secondary package based on e
 import Category from '@/components/Category'
 import DateTimePicker from '@/components/DateTimePicker'
 import ElFormItem from "../../../node_modules/element-ui/packages/form/src/form-item";
+import { parseTime } from '@/utils/index'
 
 export default {
   name: 'ComplexTable',
@@ -202,13 +203,16 @@ export default {
       reasonMap: {},
       totalCount: 0,
       listLoading: true,
+      timeRange: [parseTime(new Date() - 3600 * 1000 * 24, '{y}-{m}-{d} {h}:{i}:{s}'), parseTime(new Date(), '{y}-{m}-{d} {h}:{i}:{s}')],
       param: {
         pageIndex: 1,
         pageSize: 20,
         status: '',
-        skuId: '',
+        sku: '',
         pin: '',
-        content: ''
+        content: '',
+        reportTimeStart: '',
+        reportTimeEnd: ''
       },
       scoreOptions: [1, 2, 3],
       auditStatus: { '1': '审核通过', '-1': '已删除', '0': '待审核' },
@@ -258,14 +262,23 @@ export default {
       })
     },
     handleFilter() {
-      this.param.pageIndex = 1
+      if (this.timeRange) {
+        this.param.reportTimeStart = this.timeRange[0]
+        this.param.reportTimeEnd = this.timeRange[1]
+      } else {
+        this.param.reportTimeStart = ''
+        this.param.reportTimeEnd = ''
+      }
       this.getList()
     },
     resetSearch() {
       this.param.status = ''
       this.param.pin = ''
-      this.param.skuId = ''
+      this.param.sku = ''
       this.param.content = ''
+      this.param.reportTimeStart = parseTime(new Date() - 3600 * 1000 * 24, '{y}-{m}-{d} {h}:{i}:{s}')
+      this.param.reportTimeEnd = parseTime(new Date(), '{y}-{m}-{d} {h}:{i}:{s}')
+      this.timeRange = [parseTime(new Date() - 3600 * 1000 * 24, '{y}-{m}-{d} {h}:{i}:{s}'), parseTime(new Date(), '{y}-{m}-{d} {h}:{i}:{s}')]
       this.getList()
     },
     tableRowClassName({ row, rowIndex }) {
