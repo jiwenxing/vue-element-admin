@@ -38,7 +38,7 @@ for (let i = 0; i < totalCount; i++) {
       type: '@pick([0, 1])',
       status: '@pick([1, 7, 8])',
       content: '@csentence',
-      imageList: '@pick(' + JSON.stringify(['@image', '@image', '@image', '@image', '@image', '@image']) + ', 0, 6)',
+      pictureList: '@pick(' + JSON.stringify(['@image', '@image', '@image', '@image', '@image', '@image']) + ', 0, 6)',
       reportTime: '@datetime'
     })
     reportInfoList.push(reportInfo)
