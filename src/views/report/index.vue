@@ -9,7 +9,7 @@
             <el-option v-for="(itemValue, itemKey) in reportStatus" :key="itemKey" :label="itemValue" :value="itemKey" />
           </el-select>
         </el-form-item>
-        <el-input v-model="param.sku" placeholder="商品编号" style="width: 200px" class="filter-item bottom-space">
+        <el-input v-model="param.skuId" placeholder="商品编号" style="width: 200px" class="filter-item bottom-space">
           <template slot="prepend">商品编号:</template>
         </el-input>
         <el-input v-model="param.pin" placeholder="举报人" style="width: 200px" class="filter-item bottom-space">
@@ -38,13 +38,13 @@
     <el-table :key="tableKey" v-loading="listLoading" :data="list" :row-class-name="tableRowClassName" border fit highlight-current-row style="width: 100%;">
       <el-table-column label="商品" align="center" min-width="60px">
         <template slot-scope="{row}">
-          <span v-if="row.sku">{{ row.sku }}</span>
+          <span v-if="row.skuId">{{ row.skuId }}</span>
           <span v-else>0</span>
         </template>
       </el-table-column>
       <el-table-column label="商品名称" min-width="150px">
         <template slot-scope="{row}">
-          <el-link icon="el-icon-link" :underline="false" type="info" :href="'https://item.jd.com/' + row.sku + '.html'" target="_blank">
+          <el-link icon="el-icon-link" :underline="false" type="info" :href="'https://item.jd.com/' + row.skuId + '.html'" target="_blank">
             {{ row.skuName | contentFilter }}
           </el-link>
         </template>
@@ -284,15 +284,16 @@ export default {
       return ''
     },
     deleteComment(row, status) {
-      const deleteParam = { id: row.id }
+      const deleteParam = { id: row.id, skuId: row.skuId, orderId: row.orderId, clientCode: row.clientCode }
       deleteComment(deleteParam).then(response => {
         if (response.code === 0) {
           this.$notify({
             title: '成功',
             message: '删除成功',
-            type: 'error',
+            type: 'success',
             duration: 2000
           })
+          this.getList()
         } else {
           this.$notify({
             title: '错误',
