@@ -73,6 +73,9 @@ export default {
     }
   },
   watch: {
+    value (newValue) {
+      this.$emit('update:dateValue', newValue)
+    },
     dateValue () {
       if(this.dateValue) {
         this.value = this.dateValue
