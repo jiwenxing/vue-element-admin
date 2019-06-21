@@ -20,7 +20,7 @@
         </el-input>
         <el-form-item>
           <span class="el-input-group__append formLabel">举报时间</span>
-          <date-time-picker @time-change="param.timeRange=$event"/>
+          <date-time-picker :dateValue.sync="timeRange" />
         </el-form-item>
         <br />
         <el-button v-waves class="filter-item bottom-space" type="primary" icon="el-icon-search" @click="handleFilter">
@@ -38,31 +38,31 @@
     <el-table :key="tableKey" v-loading="listLoading" :data="list" :row-class-name="tableRowClassName" border fit highlight-current-row style="width: 100%;">
       <el-table-column label="商品" align="center" min-width="60px">
         <template slot-scope="{row}">
-          <span v-if="row.sku">{{ row.sku }}</span>
+          <span v-if="row.skuId">{{ row.skuId }}</span>
           <span v-else>0</span>
         </template>
       </el-table-column>
       <el-table-column label="商品名称" min-width="150px">
         <template slot-scope="{row}">
-          <el-link icon="el-icon-link" :underline="false" type="info" :href="'https://item.jd.com/' + row.sku + '.html'" target="_blank">
+          <el-link icon="el-icon-link" :underline="false" type="info" :href="'https://item.jd.com/' + row.skuId + '.html'" target="_blank">
             {{ row.skuName | contentFilter }}
           </el-link>
         </template>
       </el-table-column>
       <el-table-column label="评价人" min-width="85px" align="center">
         <template slot-scope="{row}">
-          <span ref="reportInfoList" @click="reportInfoDialog = true">{{ row.pin }}</span>
+          <span ref="reportInfoList">{{ row.pin }}</span>
         </template>
       </el-table-column>
       <el-table-column label="举报次数" min-width="45px" align="center">
         <template slot-scope="{row}">
-          <el-button type="text" @click="openReportInfoList(row)">{{ row.reportCount }}</el-button>
+          <el-button type="text" @click="openReportInfoList(row)">{{ row.reportInfoList.length }}</el-button>
         </template>
       </el-table-column>
       <el-table-column label="评价内容" min-width="265px">
         <template slot-scope="{row}">
           <span>{{ row.content }}</span><br/>
-          <span v-for=" image in row.imageList">
+          <span v-for="image in row.imageList">
             <el-popover placement="right" title="" trigger="hover">
               <img :src="image"/>
               <img slot="reference" :src="image" style="width:96px; height:128px;margin-right: 5px">
@@ -123,7 +123,7 @@
         <el-table-column label="内容" min-width="200px">
           <template slot-scope="{row}">
             <span>{{ row.content }}</span><br/>
-            <span v-for=" image in row.imageList">
+            <span v-for="image in row.pictureList">
             <el-popover
               placement="right"
               title=""
@@ -159,21 +159,16 @@
 </template>
 
 <script>
-import { fetchPv, createArticle } from '@/api/article'
 import { queryReportList, queryReasonList, deleteComment } from '@/api/report'
 import waves from '@/directive/waves' // waves directive
-import { getToken } from '@/utils/auth' // get token from cookie
-// import { parseTime } from '@/utils/index'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
-import Category from '@/components/Category'
 import DateTimePicker from '@/components/DateTimePicker'
-import ElFormItem from "../../../node_modules/element-ui/packages/form/src/form-item";
+import ElFormItem from '../../../node_modules/element-ui/packages/form/src/form-item';
+import { parseTime } from '@/utils/index'
 
 export default {
   name: 'ComplexTable',
-  components: {
-    ElFormItem,
-    Pagination, Category, DateTimePicker },
+  components: { ElFormItem, Pagination, DateTimePicker },
   directives: { waves },
   filters: {
     contentFilter(content) {
@@ -202,13 +197,16 @@ export default {
       reasonMap: {},
       totalCount: 0,
       listLoading: true,
+      timeRange: [parseTime(new Date() - 3600 * 1000 * 24, '{y}-{m}-{d} {h}:{i}:{s}'), parseTime(new Date(), '{y}-{m}-{d} {h}:{i}:{s}')],
       param: {
         pageIndex: 1,
         pageSize: 20,
         status: '',
-        skuId: '',
+        sku: '',
         pin: '',
-        content: ''
+        content: '',
+        reportTimeStart: '',
+        reportTimeEnd: ''
       },
       scoreOptions: [1, 2, 3],
       auditStatus: { '1': '审核通过', '-1': '已删除', '0': '待审核' },
@@ -226,7 +224,7 @@ export default {
   methods: {
     getReasonList() {
       queryReasonList().then(response => {
-        if(response.code == 0) {
+        if (response.code === 0) {
           this.reasonMap = response.reasonMap
         } else {
           this.$notify({
@@ -241,7 +239,7 @@ export default {
     getList() {
       this.listLoading = true
       queryReportList(this.param).then(response => {
-        if(response.code == 0) {
+        if (response.code === 0) {
           this.list = response.reportCommentList
           this.totalCount = response.totalCount
         } else {
@@ -258,14 +256,23 @@ export default {
       })
     },
     handleFilter() {
-      this.param.pageIndex = 1
+      if (this.timeRange) {
+        this.param.reportTimeStart = this.timeRange[0]
+        this.param.reportTimeEnd = this.timeRange[1]
+      } else {
+        this.param.reportTimeStart = ''
+        this.param.reportTimeEnd = ''
+      }
       this.getList()
     },
     resetSearch() {
       this.param.status = ''
       this.param.pin = ''
-      this.param.skuId = ''
+      this.param.sku = ''
       this.param.content = ''
+      this.param.reportTimeStart = parseTime(new Date() - 3600 * 1000 * 24, '{y}-{m}-{d} {h}:{i}:{s}')
+      this.param.reportTimeEnd = parseTime(new Date(), '{y}-{m}-{d} {h}:{i}:{s}')
+      this.timeRange = [parseTime(new Date() - 3600 * 1000 * 24, '{y}-{m}-{d} {h}:{i}:{s}'), parseTime(new Date(), '{y}-{m}-{d} {h}:{i}:{s}')]
       this.getList()
     },
     tableRowClassName({ row, rowIndex }) {
@@ -277,21 +284,25 @@ export default {
       return ''
     },
     deleteComment(row, status) {
-      const deleteParam = {id: id}
+      const deleteParam = { id: row.id, skuId: row.skuId, orderId: row.orderId, clientCode: row.clientCode }
       deleteComment(deleteParam).then(response => {
-        const code = response.reportCommentList
-        this.totalCount = response.totalCount
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
+        if (response.code === 0) {
+          this.$notify({
+            title: '成功',
+            message: '删除成功',
+            type: 'success',
+            duration: 2000
+          })
+          this.getList()
+        } else {
+          this.$notify({
+            title: '错误',
+            message: '删除出错，错误码：' + response.code,
+            type: 'error',
+            duration: 2000
+          })
+        }
       })
-      this.$notify({
-        title: '成功',
-        message: '删除成功',
-        type: 'success',
-        duration: 2000
-      })
-      row.status = status
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
