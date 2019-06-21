@@ -1,45 +1,117 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-form :inline="true" :model="listQuery" class="demo-form-inline" label-width="120px">
-        <el-form-item label="Audit Status">
-          <el-select v-model="listQuery.auditStatus" placeholder="audit status" clearable style="width: 150px" class="filter-item">
-            <el-option v-for="item in auditStatusOptions" :key="item.key" :label="item.display_name" :value="item.key" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="User Account">
-          <el-input v-model="listQuery.pin" placeholder="pin" style="width: 150px" class="filter-item" @keyup.enter.native="handleFilter" />
-        </el-form-item>
-        <el-form-item label="SKU">
-          <el-input v-model="listQuery.sku" placeholder="commodity number" style="width: 150px" class="filter-item" @keyup.enter.native="handleFilter" />
-        </el-form-item>
-        <el-form-item label="Order ID">
-          <el-input v-model="listQuery.orderId" placeholder="order number" style="width: 150px" class="filter-item" @keyup.enter.native="handleFilter" />
-        </el-form-item>
-        <br>
-        <el-form-item label="Top Status">
-          <el-select v-model="listQuery.topStatus" placeholder="top status" clearable style="width: 150px" class="filter-item">
-            <el-option v-for="item in topStatusOptions" :key="item.key" :label="item.display_name" :value="item.key" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Grade">
-          <el-select v-model="listQuery.grade" placeholder="grade" clearable style="width: 150px" class="filter-item">
-            <el-option v-for="item in gradeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Keyword">
-          <el-input v-model="listQuery.keyword" placeholder="keyword" style="width: 435px" class="filter-item" @keyup.enter.native="handleFilter" />
-        </el-form-item>
-        <br>
-        <el-form-item label="Comment Time">
-          <date-time-picker @time-change="listQuery.timeRange=$event" />
-        </el-form-item>
-        <div v-if="showAll">
+      <el-form :inline="true" :model="listQuery" class="demo-form-inline">
+        <el-row :gutter="15">
+          <el-col :span="5">
+            <el-form-item>
+              <div class="el-input-group">
+                <div class="el-input-group__prepend">Audit Status</div>
+                <el-select v-model="listQuery.textStatus" placeholder="audit status" clearable class="filter-item my-select"  size="medium">
+                  <el-option v-for="item in auditStatusOptions" :key="item.key" :label="item.display_name" :value="item.key" />
+                </el-select>
+              </div>
+            </el-form-item>
+          </el-col>
+          <el-col :span="5">
+            <el-form-item>
+              <el-input v-model="listQuery.pin" placeholder="pin" class="filter-item" size="medium">
+                <template slot="prepend">User Account</template>
+              </el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="14">
+            <el-form-item>
+              <el-input v-model="listQuery.associateName" placeholder="Product Name" style="width: 450px" class="filter-item" size="medium">
+                <template slot="prepend">Product Name</template>
+              </el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="15">
+          <el-col :span="5">
+            <el-form-item>
+              <el-input v-model="listQuery.objectId" placeholder="sku" class="filter-item" size="medium">
+                <template slot="prepend">SKU</template>
+              </el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="5">
+            <el-form-item>
+              <el-input v-model="listQuery.referenceEventId" placeholder="order number" class="filter-item" size="medium">
+                <template slot="prepend">Order ID</template>
+              </el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="14">
+            <el-form-item>
+              <el-input v-model="listQuery.content" placeholder="content" style="width: 450px" class="filter-item" size="medium">
+                <template slot="prepend">Content</template>
+              </el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="15">
+          <el-col :span="5">
+            <el-form-item>
+              <div class="el-input-group">
+                <div class="el-input-group__prepend">Top Status</div>
+                <el-select v-model="listQuery.topped" placeholder="top status" clearable class="filter-item my-select" size="medium">
+                  <el-option v-for="item in topStatusOptions" :key="item.key" :label="item.display_name" :value="item.key" />
+                </el-select>
+              </div>
+            </el-form-item>
+          </el-col>
+          <el-col :span="5">
+            <el-form-item>
+              <div class="el-input-group">
+                <div class="el-input-group__prepend">Grade</div>
+                 <el-select v-model="listQuery.scoreLevel" placeholder="grade" clearable class="filter-item my-select" size="medium">
+                   <el-option v-for="item in gradeOptions" :key="item.key" :label="item.display_name" :value="item.key" />
+                 </el-select>
+              </div>
+            </el-form-item>
+          </el-col>
+          <el-col :span="14">
+            <el-form-item>
+              <date-time-picker @time-change="listQuery.timeRange=$event" style="width: 450px; height:36px" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="15">
+          <el-col :span="5">
+            <el-form-item>
+              <el-input v-model="listQuery.nickName" placeholder="nick name" class="filter-item" size="medium">
+                <template slot="prepend">Nick Name</template>
+              </el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="5">
+            <el-form-item>
+              <div class="el-input-group">
+                <div class="el-input-group__prepend">Share Status</div>
+                 <el-select v-model="listQuery.shareOrderStatus" placeholder="share status" clearable class="filter-item my-select" size="medium">
+                   <el-option v-for="item in shareStatusOptions" :key="item.key" :label="item.display_name" :value="item.key" />
+                 </el-select>
+              </div>
+            </el-form-item>
+          </el-col>
+          <el-col :span="14">
+            <el-form-item>
+              <div class="el-input-group">
+                <div class="el-input-group__prepend">Category</div>
+                  <category @cate-change="listQuery.category=$event" style="width: 325px; height:36px" />
+              </div>
+            </el-form-item>
+          </el-col>
+        </el-row>
+          
+        <!-- <div v-if="showAll">
           <el-form-item label="Nick Name">
-            <el-input v-model="listQuery.orderId" placeholder="nick name" style="width: 150px" class="filter-item" @keyup.enter.native="handleFilter" />
+            <el-input v-model="listQuery.nickName" placeholder="nick name" style="width: 150px" class="filter-item" />
           </el-form-item>
           <el-form-item label="Share Status">
-            <el-select v-model="listQuery.shareStatus" placeholder="share status" clearable style="width: 150px" class="filter-item">
+            <el-select v-model="listQuery.shareOrderStatus" placeholder="share status" clearable style="width: 150px" class="filter-item">
               <el-option v-for="item in shareStatusOptions" :key="item.key" :label="item.display_name" :value="item.key" />
             </el-select>
           </el-form-item>
@@ -51,7 +123,7 @@
           <i :class="[showAll ? 'el-icon-caret-top' : 'el-icon-caret-bottom']" />
           <span v-if="showAll" class="tips">hide extra filter options</span>
           <span v-else class="tips">show more filter options</span>
-        </div>
+        </div> -->
         <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
           Search
         </el-button>
@@ -84,25 +156,19 @@
               <span>{{ row.guid }}</span>
             </el-form-item>
             <el-form-item label="Order ID:">
-              <span>{{ row.orderId }}</span>
+              <span>{{ row.referenceEventId }}</span>
             </el-form-item>
             <el-form-item label="Top Status:">
-              <span>{{ row.topStatus | topStatusShowFilter }}</span>
+              <span>{{ row.topped | topStatusShowFilter }}</span>
             </el-form-item>
             <el-form-item label="User Nick Name:">
-              <span>{{ row.reviewer }}</span>
+              <span>{{ row.nickName }}</span>
             </el-form-item>
             <el-form-item label="Commodity Name:">
               <span>{{ row.commodityName }}</span>
             </el-form-item>
-            <el-form-item label="Price:">
-              <span>{{ row.forecast }}</span>
-            </el-form-item>
-            <el-form-item label="Category:">
-              <span>{{ row.category }}</span>
-            </el-form-item>
             <el-form-item label="IP:">
-              <span>{{ row.ip }}</span>
+              <span>{{ row.userIp }}</span>
             </el-form-item>
             <el-form-item label="Client Type:">
               <span>{{ row.clientType }}</span>
@@ -126,7 +192,7 @@
         <template slot-scope="{row}">
           <el-tooltip placement="top">
             <div slot="content">{{ row.commodityName }}</div>
-            <el-link icon="el-icon-link" :underline="false" type="info" :href="'https://item.jd.com/' + row.sku + '.html'" target="_blank">{{ row.sku }}</el-link>
+            <el-link icon="el-icon-link" :underline="false" type="info" :href="'https://item.jd.com/' + row.objectId + '.html'" target="_blank">{{ row.objectId }}</el-link>
           </el-tooltip>
         </template>
       </el-table-column>
@@ -148,8 +214,8 @@
       </el-table-column>
       <!-- <el-table-column label="Audit Status" class-name="status-col" min-width="110">
         <template slot-scope="{row}">
-          <el-tag :type="row.status | statusFilter">
-            {{ row.status | statusShowFilter }}
+          <el-tag :type="row.textStatus | statusFilter">
+            {{ row.textStatus | statusShowFilter }}
           </el-tag>
         </template>
       </el-table-column>
@@ -163,11 +229,11 @@
       </el-table-column> -->
       <el-table-column label="Status" class-name="status-col" width="140" align="center">
         <template slot-scope="{row}">
-          <el-tag :type="row.status | statusFilter">
-            {{ row.status | statusShowFilter }}
+          <el-tag :type="row.textStatus | statusFilter">
+            {{ row.textStatus | statusShowFilter }}
           </el-tag>
-          <el-tag v-if="row.status==1 && row.topStatus!=0" :type="row.topStatus | statusFilter" effect="plain">
-            <i :class="row.topStatus | topStatusIconFilter" />
+          <el-tag v-if="row.textStatus==1 && row.topped!=0" :type="row.topped | statusFilter" effect="plain">
+            <i :class="row.topped | topStatusIconFilter" />
             <!-- {{ row.topStatus | topStatusShowFilter }} -->
           </el-tag>
         </template>
@@ -175,30 +241,30 @@
       <el-table-column label="Comment Time" width="180px" align="center">
         <template slot-scope="scope">
           <i class="el-icon-time" />
-          <span>{{ scope.row.display_time }}</span>
+          <span>{{ scope.row.creationTime }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Actions" align="center" width="250" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <el-button v-if="row.status==1" plain size="mini" type="danger" @click="handleModifyAuditStatus(row, -1)">
+          <el-button v-if="row.textStatus===1" plain size="mini" type="danger" @click="handleModifyAuditStatus(row, -1)">
             Delete
           </el-button>
-          <el-button v-if="row.status==-1" plain size="mini" type="success" @click="handleModifyAuditStatus(row, 1)">
+          <el-button v-if="row.textStatus===-1" plain size="mini" type="success" @click="handleModifyAuditStatus(row, 1)">
             Pass
           </el-button>
-          <el-button v-if="row.status==0" plain size="mini" type="success" @click="handleModifyAuditStatus(row, 1)">
+          <el-button v-if="row.textStatus===2" plain size="mini" type="success" @click="handleModifyAuditStatus(row, 1)">
             Passed
           </el-button>
-          <el-button v-if="row.status==0" plain size="mini" type="danger" @click="handleModifyAuditStatus(row, -1)">
+          <el-button v-if="row.textStatus===2" plain size="mini" type="danger" @click="handleModifyAuditStatus(row, -1)">
             Delete
           </el-button>
-          <el-button v-if="(row.topStatus==0 || row.topStatus==-1) && row.status==1" plain size="mini" type="success" @click="handleModifyTopStatus(row, 1)">
+          <el-button v-if="(row.topped===0 || row.topped===-1) && row.textStatus===1" plain size="mini" type="success" @click="handleModifyTopStatus(row, 1)">
             Top
           </el-button>
-          <el-button v-if="(row.topStatus==0 || row.topStatus==1) && row.status==1" plain size="mini" type="danger" @click="handleModifyTopStatus(row, -1)">
+          <el-button v-if="(row.topped===0 || row.topped===1) && row.textStatus===1" plain size="mini" type="danger" @click="handleModifyTopStatus(row, -1)">
             Sink
           </el-button>
-          <el-button v-if="(row.status==1 && row.topStatus!=0) && row.status==1" plain size="mini" type="info" @click="handleModifyTopStatus(row, 0)">
+          <el-button v-if="(row.textStatus===1 && row.topped!=0) && row.textStatus===1" plain size="mini" type="info" @click="handleModifyTopStatus(row, 0)">
             Nomal
           </el-button>
         </template>
@@ -240,7 +306,7 @@
         <el-button @click="dialogFormVisible = false">
           cancel
         </el-button>
-        <el-button type="primary" @click="updateData">
+        <el-button type="primary" @click="updateData(row)">
           confirm
         </el-button>
       </div>
@@ -266,7 +332,8 @@ import BackToTop from '@/components/BackToTop'
 const auditStatusOptions = [
   { key: 1, display_name: 'Passed' },
   { key: -1, display_name: 'Deleted' },
-  { key: 0, display_name: 'Auditing' }
+  { key: 2, display_name: 'Auditing' },
+  { key: 0, display_name: 'None' }
 ]
 
 const gradeOptions = [
@@ -291,6 +358,7 @@ export default {
     statusFilter(status) {
       const statusMap = {
         '1': 'success',
+        '2': 'info',
         '0': 'info',
         '-1': 'danger'
       }
@@ -299,8 +367,9 @@ export default {
     statusShowFilter(status) {
       const statusMap = {
         '1': 'Passed',
-        '0': 'Auditing',
-        '-1': 'Deleted'
+        '2': 'Auditing',
+        '-1': 'Deleted',
+        '0': 'None'
       }
       return statusMap[status]
     },
@@ -323,12 +392,13 @@ export default {
   },
   data() {
     return {
-      showAll: false,
+      showAll: true,
       multipleSelection: {
         commentIds: [],
         textStatus: undefined,
-        topStatus: undefined,
-        token: ''
+        topped: undefined,
+        token: '',
+        clientCode: 'TH'
       },
       tableKey: 0,
       list: null,
@@ -337,7 +407,8 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
-        auditStatus: 0
+        textStatus: 2,
+        clientCode: 'TH'
       },
       scoreOptions: [1, 2, 3],
       auditStatusOptions,
@@ -349,7 +420,9 @@ export default {
         id: undefined,
         score: undefined,
         timestamp: new Date(),
-        status: undefined
+        status: undefined,
+        content: undefined,
+        clientCode: 'TH'
       },
       myBackToTopStyle: {
         right: '50px',
@@ -380,18 +453,23 @@ export default {
     getList() {
       this.listLoading = true
       fetchList(this.listQuery).then(response => {
-        const items = response.data.items
-        this.total = response.data.total
-        this.list = items.map(v => {
-          this.$set(v, 'edit', false) // https://vuejs.org/v2/guide/reactivity.html
-          v.originalContent = v.Content //  will be used when user click the cancel botton
-          return v
-        })
-
+        if (response.result) {
+          const items = response.result.list
+          this.total = response.result.total
+          this.list = items.map(v => {
+            this.$set(v, 'edit', false) // https://vuejs.org/v2/guide/reactivity.html
+            v.originalContent = v.Content //  will be used when user click the cancel botton
+            return v
+          })
+        } else {
+          this.list = []
+          this.total = 0
+        }
+        this.listLoading = false
         // Just to simulate the time of the request
-        setTimeout(() => {
-          this.listLoading = false
-        }, 1.5 * 1000)
+        // setTimeout(() => {
+        //   this.listLoading = false
+        // }, 1.5 * 1000)
       })
     },
     handleFilter() {
@@ -399,13 +477,15 @@ export default {
       this.getList()
     },
     resetSearch() {
-      this.listQuery.auditStatus = ''
-      this.listQuery.pin = ''
-      this.listQuery.sku = ''
-      this.listQuery.orderId = ''
-      this.listQuery.grade = ''
-      this.listQuery.topStatus = ''
-      this.listQuery.keyword = ''
+      this.listQuery.textStatus = undefined
+      this.listQuery.pin = undefined
+      this.listQuery.objectId = undefined
+      this.listQuery.referenceEventId = undefined
+      this.listQuery.scoreLevel = undefined
+      this.listQuery.topped = undefined
+      this.listQuery.content = undefined
+      this.listQuery.nickName = undefined
+      this.listQuery.shareOrderStatus = undefined
       this.getList()
     },
     tableRowClassName({ row, rowIndex }) {
@@ -419,13 +499,13 @@ export default {
     handleModifyAuditStatus(row, status) {
       const param = Object.assign({}, this.temp)
       param.id = row.id
-      param.status = status
+      param.textStatus = status
       let action = 'Pass'
       if (status === -1) {
         action = 'Delete'
       }
       updateAuditStatus(param).then(() => {
-        row.status = status
+        row.textStatus = status
         this.$notify({
           title: 'Success',
           message: action + ' Successfully',
@@ -437,7 +517,7 @@ export default {
     handleModifyTopStatus(row, status) {
       const param = Object.assign({}, this.temp)
       param.id = row.id
-      param.status = status
+      param.topped = status
       let action = 'Top'
       if (status === -1) {
         action = 'Sink'
@@ -445,7 +525,7 @@ export default {
         action = 'Reset'
       }
       updateTopStatus(param).then(() => {
-        row.topStatus = status
+        row.topped = status
         this.$notify({
           title: 'Success',
           message: action + ' Successfully',
@@ -469,29 +549,44 @@ export default {
       const selectedIds = this.multipleSelection.commentIds
       this.multipleSelection.textStatus = status
       this.multipleSelection.token = getToken()
-      setTimeout(() => {
-        batchAuditSelected(this.multipleSelection).then(() => {
-          this.list.forEach(function(item, index, arr) {
-            const hit = selectedIds.findIndex(function(value, index, arr) {
-              return value === item.id
-            }) > -1
-            if (hit) {
-              item.status = status
-            }
-          })
-        })
-        this.listLoading = false
-        this.$notify({
-          title: 'Success',
-          message: 'All Selected Comments Audited',
-          type: 'success',
-          duration: 2000
-        })
-      }, 1 * 1000)
+      batchAuditSelected(this.multipleSelection).then(() => {
+        setTimeout(() => {
+          this.getList()
+        }, 1 * 1000)
+      })
+      this.listLoading = false
+      this.$notify({
+        title: 'Success',
+        message: 'All Selected Comments Audited',
+        type: 'success',
+        duration: 2000
+      })
+      // setTimeout(() => {
+      //   batchAuditSelected(this.multipleSelection).then(() => {
+      //     this.list.forEach(function(item, index, arr) {
+      //       const hit = selectedIds.findIndex(function(value, index, arr) {
+      //         return value === item.id
+      //       }) > -1
+      //       if (hit) {
+      //         item.textStatus = status
+      //       }
+      //     })
+      //     this.getList()
+      //   })
+      //   this.listLoading = false
+      //   this.$notify({
+      //     title: 'Success',
+      //     message: 'All Selected Comments Audited',
+      //     type: 'success',
+      //     duration: 2000
+      //   })
+      // }, 1 * 1000)
     },
     handleUpdate(row) {
-      this.temp = Object.assign({}, row) // copy obj
-      this.temp.timestamp = new Date(this.temp.timestamp)
+      // this.temp = Object.assign({}, row) // copy obj
+      this.temp.content = row.content
+      this.temp.id = row.id
+      // this.temp.timestamp = new Date(this.temp.timestamp)
       this.temp.token = getToken()
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
@@ -502,17 +597,16 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          const tempData = Object.assign({}, this.temp)
-          tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          updateContent(tempData).then(() => {
-            for (const v of this.list) {
-              if (v.id === this.temp.id) {
-                const index = this.list.indexOf(v)
-                this.list.splice(index, 1, this.temp)
-                break
-              }
-            }
+          updateContent(this.temp).then(() => {
+            // for (const v of this.list) {
+            //   if (v.id === this.temp.id) {
+            //     const index = this.list.indexOf(v)
+            //     this.list.splice(index, 1, this.temp)
+            //     break
+            //   }
+            // }
             this.dialogFormVisible = false
+            this.getList()
             this.$notify({
               title: '成功',
               message: '更新成功',
@@ -578,5 +672,13 @@ export default {
   color:#409eff;
   background-color:#f9fafc
 }
-
+/* https://panjiachen.gitee.io/vue-element-admin-site/zh/guide/essentials/style.html#%E7%88%B6%E7%BB%84%E4%BB%B6%E6%94%B9%E5%8F%98%E5%AD%90%E7%BB%84%E4%BB%B6%E6%A0%B7%E5%BC%8F-%E6%B7%B1%E5%BA%A6%E9%80%89%E6%8B%A9%E5%99%A8 */
+.demo-form-inline >>> .el-input-group__prepend { 
+  width: 125px;
+  text-align: center;
+}
+.my-select {
+  width: 185px;
+  text-align: center;
+}
 </style>
