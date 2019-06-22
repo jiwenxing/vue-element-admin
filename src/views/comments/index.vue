@@ -3,7 +3,7 @@
     <div class="filter-container">
       <el-form :inline="true" :model="listQuery" class="demo-form-inline">
         <el-row :gutter="15">
-          <el-col :span="5">
+          <el-col :span="6">
             <el-form-item>
               <div class="el-input-group">
                 <div class="el-input-group__prepend">Audit Status</div>
@@ -13,14 +13,14 @@
               </div>
             </el-form-item>
           </el-col>
-          <el-col :span="5">
+          <el-col :span="6">
             <el-form-item>
               <el-input v-model="listQuery.pin" placeholder="pin" class="filter-item" size="medium">
                 <template slot="prepend">User Account</template>
               </el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="14">
+          <el-col :span="12">
             <el-form-item>
               <el-input v-model="listQuery.associateName" placeholder="Product Name" style="width: 450px" class="filter-item" size="medium">
                 <template slot="prepend">Product Name</template>
@@ -29,21 +29,21 @@
           </el-col>
         </el-row>
         <el-row :gutter="15">
-          <el-col :span="5">
+          <el-col :span="6">
             <el-form-item>
               <el-input v-model="listQuery.objectId" placeholder="sku" class="filter-item" size="medium">
                 <template slot="prepend">SKU</template>
               </el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="5">
+          <el-col :span="6">
             <el-form-item>
               <el-input v-model="listQuery.referenceEventId" placeholder="order number" class="filter-item" size="medium">
                 <template slot="prepend">Order ID</template>
               </el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="14">
+          <el-col :span="12">
             <el-form-item>
               <el-input v-model="listQuery.content" placeholder="content" style="width: 450px" class="filter-item" size="medium">
                 <template slot="prepend">Content</template>
@@ -52,7 +52,7 @@
           </el-col>
         </el-row>
         <el-row :gutter="15">
-          <el-col :span="5">
+          <el-col :span="6">
             <el-form-item>
               <div class="el-input-group">
                 <div class="el-input-group__prepend">Top Status</div>
@@ -62,7 +62,7 @@
               </div>
             </el-form-item>
           </el-col>
-          <el-col :span="5">
+          <el-col :span="6">
             <el-form-item>
               <div class="el-input-group">
                 <div class="el-input-group__prepend">Grade</div>
@@ -72,7 +72,7 @@
               </div>
             </el-form-item>
           </el-col>
-          <el-col :span="14">
+          <el-col :span="12">
             <el-form-item>
               <!-- <date-time-picker @time-change="listQuery.timeRange=$event" style="width: 450px; height:36px" /> -->
               <date-time-picker :date-value.sync="timeRange" style="width: 450px; height:36px" />
@@ -80,14 +80,14 @@
           </el-col>
         </el-row>
         <el-row :gutter="15">
-          <el-col :span="5">
+          <el-col :span="6">
             <el-form-item>
               <el-input v-model="listQuery.nickName" placeholder="nick name" class="filter-item" size="medium">
                 <template slot="prepend">Nick Name</template>
               </el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="5">
+          <el-col :span="6">
             <el-form-item>
               <div class="el-input-group">
                 <div class="el-input-group__prepend">Share Status</div>
@@ -97,7 +97,7 @@
               </div>
             </el-form-item>
           </el-col>
-          <el-col :span="14">
+          <el-col :span="12">
             <el-form-item>
               <div class="el-input-group">
                 <div class="el-input-group__prepend">Category</div>
@@ -328,7 +328,7 @@ import Pagination from '@/components/Pagination' // secondary package based on e
 import Category from '@/components/Category'
 import DateTimePicker from '@/components/DateTimePickerLocale'
 import BackToTop from '@/components/BackToTop'
-import { parseTime } from '@/utils/index'
+// import { parseTime } from '@/utils/index'
 
 const auditStatusOptions = [
   { key: 1, display_name: 'Passed' },
@@ -556,7 +556,7 @@ export default {
         return
       }
       this.listLoading = true
-      const selectedIds = this.multipleSelection.commentIds
+      // const selectedIds = this.multipleSelection.commentIds
       this.multipleSelection.textStatus = status
       this.multipleSelection.token = getToken()
       batchAuditSelected(this.multipleSelection).then(() => {
@@ -688,7 +688,7 @@ export default {
   text-align: center;
 }
 .my-select {
-  width: 185px;
+  width: 180px;
   text-align: center;
 }
 </style>
