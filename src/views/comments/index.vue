@@ -101,7 +101,7 @@
             <el-form-item>
               <div class="el-input-group">
                 <div class="el-input-group__prepend">Category</div>
-                <category style="width: 325px; height:36px" @cate-change="listQuery.categoryIds=$event" />
+                <category v-model="listQuery.categoryIds" style="width: 325px; height:36px" />
               </div>
             </el-form-item>
           </el-col>
@@ -408,6 +408,7 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
+        categoryIds: [],
         // textStatus: 2,
         clientCode: 'TH'
       },
@@ -496,6 +497,7 @@ export default {
       this.listQuery.nickName = undefined
       this.listQuery.shareOrderStatus = undefined
       this.timeRange = [new Date(new Date() - 3600 * 1000 * 24 * 7), new Date()]
+      this.listQuery.categoryIds = []
       this.getList()
     },
     tableRowClassName({ row, rowIndex }) {
