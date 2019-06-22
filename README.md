@@ -1,4 +1,4 @@
-# komento-vue
+# my-vue-admin
 
 本项目基于 [vue-element-admin](https://panjiachen.gitee.io/vue-element-admin-site/zh/)，更多信息请参考其 [使用文档](https://panjiachen.github.io/vue-element-admin-site/zh/)
 
@@ -15,9 +15,9 @@
 
 ```bash
 # 克隆项目
-git clone http://git.jd.com/mclab/komento-admin-vue.git
+git clone https://github.com/jiwenxing/vue-element-admin.git
 # 进入项目目录
-cd komento-admin-vue
+cd vue-element-admin
 
 # 安装依赖
 npm install
